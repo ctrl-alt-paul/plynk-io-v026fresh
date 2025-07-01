@@ -1,0 +1,89 @@
+{
+  "id": "eb0c9057-f6c1-4840-ac91-ef2e64b912e9",
+  "name": "WLED-Player1 - Imported",
+  "deviceIP": "192.168.1.198",
+  "importedAt": "2025-05-14T02:17:09.697Z",
+  "rules": [
+    {
+      "id": "90b20756-6b27-4ffc-b23a-084b47ab1331",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        0
+      ],
+      "effect": 0,
+      "color": [
+        0,
+        0,
+        0
+      ],
+      "brightness": 255,
+      "imported": true
+    },
+    {
+      "id": "2574e9ac-91e3-42d5-822b-34108902885f",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        1
+      ],
+      "effect": 157,
+      "color": [
+        0,
+        0,
+        255
+      ],
+      "brightness": 255,
+      "imported": true
+    },
+    {
+      "id": "f6fc1295-91cf-43f1-84f0-91773193f240",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        2
+      ],
+      "effect": 157,
+      "color": [
+        0,
+        0,
+        255
+      ],
+      "brightness": 255,
+      "imported": true
+    },
+    {
+      "id": "dd77cbc1-2b6c-409c-a8b3-e94be5a2078e",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        3
+      ],
+      "effect": 157,
+      "color": [
+        0,
+        0,
+        255
+      ],
+      "brightness": 255,
+      "imported": true
+    },
+    {
+      "id": "3e4450ea-b110-4e72-9db4-e9910741b5db",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        4
+      ],
+      "effect": 157,
+      "color": [
+        0,
+        0,
+        255
+      ],
+      "brightness": 255,
+      "imported": true
+    }
+  ],
+  "description": "This is an Imported profile"
+}

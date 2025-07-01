@@ -1,0 +1,146 @@
+{
+  "process": "drive.elf",
+  "pollInterval": 16,
+  "outputs": [
+    {
+      "label": "Start Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "regal32.dll",
+      "offset": "0x2B2",
+      "offsets": [
+        "0x5C",
+        "0x08"
+      ],
+      "bitmask": "0x80",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "View1 Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "regal32.dll",
+      "offset": "0x2B2",
+      "offsets": [
+        "0x5C",
+        "0x08"
+      ],
+      "bitmask": "0x08",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Boost Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "regal32.dll",
+      "offset": "0x2B2",
+      "offsets": [
+        "0x5C",
+        "0x08"
+      ],
+      "bitmask": "0x10",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Lamp Red",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "regal32.dll",
+      "offset": "0x2B2",
+      "offsets": [
+        "0x5C",
+        "0x08"
+      ],
+      "bitmask": "0x01",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Lamp Blue",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "regal32.dll",
+      "offset": "0x2B2",
+      "offsets": [
+        "0x5C",
+        "0x08"
+      ],
+      "bitmask": "0x02",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Lamp Red 2",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "regal32.dll",
+      "offset": "0x2B3",
+      "offsets": [
+        "0x5C",
+        "0x08"
+      ],
+      "bitmask": "0x40",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Lamp Blue 2",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "regal32.dll",
+      "offset": "0x2B3",
+      "offsets": [
+        "0x5C",
+        "0x08"
+      ],
+      "bitmask": "0x80",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    }
+  ]
+}

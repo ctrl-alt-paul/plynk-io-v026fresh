@@ -1,0 +1,56 @@
+
+{
+  "profileName": "Chase H.Q 2",
+  "outputs": [
+    {
+      "key": "__MAME_START__",
+      "label": "__MAME_START__",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_2",
+      "label": "LampStart",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_26",
+      "label": "LampPatoButtonR",
+      "lastValue": 100,
+      "format": "",
+      "script": "value > 0 ? 1 : 0"
+    },
+    {
+      "key": "__GAME_NAME__",
+      "label": "ChaseHQ2",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_27",
+      "label": "LampPatoButtonB",
+      "lastValue": 0,
+      "format": "",
+      "script": "value > 0 ? 1 : 0"
+    },
+    {
+      "key": "id_28",
+      "label": "LampPato",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_89",
+      "label": "FFB",
+      "lastValue": 16,
+      "format": "",
+      "script": ""
+    }
+  ],
+  "messageProfileType": "user"
+}

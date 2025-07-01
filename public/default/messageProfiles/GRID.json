@@ -1,0 +1,28 @@
+
+{
+  "profileName": "GRID",
+  "outputs": [
+    {
+      "key": "__MAME_START__",
+      "label": "__MAME_START__",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_145",
+      "label": "Throttle1",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "__GAME_NAME__",
+      "label": "GRID",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    }
+  ],
+  "messageProfileType": "default"
+}

@@ -1,0 +1,61 @@
+{
+  "id": "Sega Rally 3.json",
+  "fileName": "Sega Rally 3.json",
+  "process": "rally.exe",
+  "pollInterval": 16,
+  "outputs": [
+    {
+      "label": "RPM (engine speed)",
+      "type": "Float",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "Math.round(value) / 100",
+      "useModuleOffset": true,
+      "moduleName": "rally.exe",
+      "offset": "0x5DBE84",
+      "offsets": [],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": false
+    },
+    {
+      "label": "View Button Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "rally.exe",
+      "offset": "0x5DD104",
+      "offsets": [],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": false
+    },
+    {
+      "label": "Start Button Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "rally.exe",
+      "offset": "0x5D6DF8",
+      "offsets": [],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": false
+    }
+  ],
+  "lastModified": 1750477018921,
+  "outputCount": 3
+}

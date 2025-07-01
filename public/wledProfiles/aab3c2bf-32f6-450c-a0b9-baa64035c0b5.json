@@ -1,0 +1,74 @@
+{
+  "id": "aab3c2bf-32f6-450c-a0b9-baa64035c0b5",
+  "name": "WLED-SoundReactiveP1 - Imported",
+  "deviceIP": "192.168.1.197",
+  "importedAt": "2025-05-14T02:19:38.643Z",
+  "rules": [
+    {
+      "id": "6b693173-aa99-4ade-879d-98636add9156",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        0
+      ],
+      "effect": 141,
+      "color": [
+        255,
+        33,
+        13
+      ],
+      "brightness": 255,
+      "imported": true
+    },
+    {
+      "id": "e769d330-bc8b-402f-8074-3c96e4da3446",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        1
+      ],
+      "effect": 141,
+      "color": [
+        255,
+        33,
+        13
+      ],
+      "brightness": 255,
+      "imported": true
+    },
+    {
+      "id": "032c8912-27e5-4e74-b552-81297c4971b9",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        2
+      ],
+      "effect": 141,
+      "color": [
+        255,
+        33,
+        13
+      ],
+      "brightness": 255,
+      "imported": true,
+      "turnOffSegment": true
+    },
+    {
+      "id": "74269b2d-a458-4cc6-bc57-90255b27dda5",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        3
+      ],
+      "effect": 141,
+      "color": [
+        255,
+        33,
+        13
+      ],
+      "brightness": 255,
+      "imported": true
+    }
+  ],
+  "description": ""
+}

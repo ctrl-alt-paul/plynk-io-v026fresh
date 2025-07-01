@@ -1,0 +1,40 @@
+[
+  {
+    "id": "04bd126b-56df-4c17-b4f6-4bb6eece2974",
+    "name": "Arduino Uno",
+    "type": "Arduino",
+    "comPort": "COM3",
+    "baudRate": 115200,
+    "connected": false,
+    "usbPath": "COM3",
+    "protocol": "Serial"
+  },
+  {
+    "id": "565780ed-ec4f-4f37-9873-3199b2d782d8",
+    "name": "PacDrive 0",
+    "type": "PacDrive",
+    "connected": true,
+    "usbPath": "0",
+    "outputCount": 16
+  },
+  {
+    "id": "2bc3c971-eda6-4c22-9be4-647698cd1e8b",
+    "name": "WLED-SoundReactiveP1",
+    "type": "WLED",
+    "connected": false,
+    "ipAddress": "192.168.1.197",
+    "segmentCount": 4,
+    "totalLEDs": 64,
+    "ledsPerSegment": []
+  },
+  {
+    "id": "592e7f9e-ac0e-434c-8eba-cfdab7c7ba7b",
+    "name": "WLED-Player1",
+    "type": "WLED",
+    "connected": false,
+    "ipAddress": "192.168.1.198",
+    "segmentCount": 5,
+    "totalLEDs": 304,
+    "ledsPerSegment": []
+  }
+]

@@ -1,0 +1,2 @@
+
+export { GameManagerHelpDialog } from '../GameManagerHelpDialog';

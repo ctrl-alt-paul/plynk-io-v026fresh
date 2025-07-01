@@ -1,0 +1,138 @@
+{
+  "process": "InitialD0_DX11_Nu.exe",
+  "pollInterval": 16,
+  "outputs": [
+    {
+      "label": "Start Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "InitialD0_DX11_Nu.exe",
+      "offset": "0x21396F0",
+      "offsets": [
+        "0x40",
+        "0x40",
+        "0x0",
+        "0x278"
+      ],
+      "bitmask": "0x80",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "View1 Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "InitialD0_DX11_Nu.exe",
+      "offset": "0x21396F0",
+      "offsets": [
+        "0x40",
+        "0x40",
+        "0x0",
+        "0x278"
+      ],
+      "bitmask": "0x40",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Select Up Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "InitialD0_DX11_Nu.exe",
+      "offset": "0x21396F0",
+      "offsets": [
+        "0x40",
+        "0x40",
+        "0x0",
+        "0x278"
+      ],
+      "bitmask": "0x02",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Select Down Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "InitialD0_DX11_Nu.exe",
+      "offset": "0x21396F0",
+      "offsets": [
+        "0x40",
+        "0x40",
+        "0x0",
+        "0x278"
+      ],
+      "bitmask": "0x01",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Select Left Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "InitialD0_DX11_Nu.exe",
+      "offset": "0x21396F0",
+      "offsets": [
+        "0x40",
+        "0x40",
+        "0x0",
+        "0x279"
+      ],
+      "bitmask": "0x80",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Select Right Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "InitialD0_DX11_Nu.exe",
+      "offset": "0x21396F0",
+      "offsets": [
+        "0x40",
+        "0x40",
+        "0x0",
+        "0x279"
+      ],
+      "bitmask": "0x40",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    }
+  ]
+}

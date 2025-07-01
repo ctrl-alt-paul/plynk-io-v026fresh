@@ -1,0 +1,44 @@
+{
+  "id": "fccac8be-8441-4107-bd33-c0168fd4dfc0",
+  "name": "Manual Profile 2",
+  "description": "This is another manually created profile",
+  "deviceIP": "192.168.1.197",
+  "importedAt": "2025-05-13T11:26:36.832Z",
+  "rules": [
+    {
+      "id": "b80c5d55-76c8-4b28-b282-e0bc3c2fa8c1",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        0,
+        1
+      ],
+      "effect": 33,
+      "color": [
+        150,
+        63,
+        238
+      ],
+      "brightness": 255,
+      "flash": false
+    },
+    {
+      "id": "446753bd-f06c-4552-9ee3-b4075ee348e7",
+      "triggerType": "range",
+      "exactValue": 1,
+      "segments": [
+        3
+      ],
+      "effect": 53,
+      "color": [
+        71,
+        215,
+        140
+      ],
+      "brightness": 128,
+      "flash": false,
+      "minValue": 25,
+      "maxValue": 45
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+
+{
+  "profileName": "Battle Gear 4 Tuned",
+  "outputs": [
+    {
+      "key": "__MAME_START__",
+      "label": "__MAME_START__",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_2",
+      "label": "LampStart",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_3",
+      "label": "LampView1",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_16",
+      "label": "LampKey",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_17",
+      "label": "LampOnline",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_18",
+      "label": "LampOverrev",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_19",
+      "label": "LampRed",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "__GAME_NAME__",
+      "label": "Battle Gear 4 Tuned",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_20",
+      "label": "LampGreen",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_21",
+      "label": "LampBlue",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_22",
+      "label": "LampYellow",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_23",
+      "label": "LampCyan",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_24",
+      "label": "LampMagneta",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_25",
+      "label": "LampWhite",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_26",
+      "label": "LampPatoButtonR",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    }
+  ],
+  "messageProfileType": "user"
+}

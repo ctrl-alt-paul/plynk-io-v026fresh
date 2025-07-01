@@ -1,0 +1,77 @@
+
+{
+  "profileName": "Daytona Championship USA NSE",
+  "outputs": [
+    {
+      "key": "__MAME_START__",
+      "label": "__MAME_START__",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_2",
+      "label": "LampStart",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_3",
+      "label": "LampView1",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_4",
+      "label": "LampView2",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_5",
+      "label": "LampView3",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "__GAME_NAME__",
+      "label": "Daytona Championship USA NSE",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_6",
+      "label": "LampView4",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_7",
+      "label": "LampLeader",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_90",
+      "label": "FFB1",
+      "lastValue": 205,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_145",
+      "label": "Throttle1",
+      "lastValue": 50,
+      "format": "",
+      "script": ""
+    }
+  ],
+  "messageProfileType": "user"
+}

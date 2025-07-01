@@ -1,0 +1,57 @@
+{
+  "process": "CrazyRide.exe",
+  "pollInterval": 16,
+  "outputs": [
+    {
+      "label": "Start Lamp",
+      "type": "Int32",
+      "offset": "0x22630",
+      "script": "value == 1 ? true : (value == 2 ? toggle('StartLamp') : false)",
+      "notes": "Toggle logic: 1 = ON, 2 = Toggle",
+      "address": "",
+      "invert": false,
+      "format": "{value}",
+      "useModuleOffset": true,
+      "moduleName": "UsbPluginsDll_R.dll",
+      "offsets": [],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": false
+    },
+    {
+      "label": "Brake Lamp (View1)",
+      "type": "Int32",
+      "offset": "0x22638",
+      "script": "value == 1 ? true : (value == 2 ? toggle('BrakeLamp') : false)",
+      "notes": "Toggle logic: 1 = ON, 2 = Toggle",
+      "address": "",
+      "invert": false,
+      "format": "{value}",
+      "useModuleOffset": true,
+      "moduleName": "UsbPluginsDll_R.dll",
+      "offsets": [],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": false
+    },
+    {
+      "label": "Stop Lamp (View2)",
+      "type": "Int32",
+      "offset": "0x22634",
+      "script": "value == 1 ? true : (value == 2 ? toggle('StopLamp') : false)",
+      "notes": "Toggle logic: 1 = ON, 2 = Toggle",
+      "address": "",
+      "invert": false,
+      "format": "{value}",
+      "useModuleOffset": true,
+      "moduleName": "UsbPluginsDll_R.dll",
+      "offsets": [],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": false
+    }
+  ]
+}

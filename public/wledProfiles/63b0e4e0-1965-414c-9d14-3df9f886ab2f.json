@@ -1,0 +1,30 @@
+{
+  "id": "63b0e4e0-1965-414c-9d14-3df9f886ab2f",
+  "name": "TEST",
+  "description": "",
+  "deviceIP": "192.168.1.198",
+  "importedAt": "2025-05-14T02:14:28.318Z",
+  "rules": [
+    {
+      "id": "f8eb1993-7fce-4c9a-864f-1914c42d93f2",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "effect": 0,
+      "color": [
+        255,
+        0,
+        0
+      ],
+      "brightness": 255,
+      "flash": false,
+      "turnOffSegment": false
+    }
+  ]
+}

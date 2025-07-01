@@ -1,0 +1,26 @@
+{
+  "id": "e51ffe6c-8ab1-4d15-8044-61458c645b2c",
+  "name": "Manual Profile",
+  "description": "This is a manually created profile",
+  "deviceIP": "192.168.1.197",
+  "importedAt": "2025-05-13T11:25:44.041Z",
+  "rules": [
+    {
+      "id": "86e17b74-6a90-4a5c-83d5-beed69778673",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        0,
+        1
+      ],
+      "effect": 9,
+      "color": [
+        149,
+        40,
+        40
+      ],
+      "brightness": 255,
+      "flash": false
+    }
+  ]
+}

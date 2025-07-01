@@ -1,0 +1,63 @@
+
+{
+  "profileName": "Disney Cars",
+  "outputs": [
+    {
+      "key": "__MAME_START__",
+      "label": "__MAME_START__",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_2",
+      "label": "LampStart",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_3",
+      "label": "LampView1",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_4",
+      "label": "LampView2",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "__GAME_NAME__",
+      "label": "Cars",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_5",
+      "label": "LampView3",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_64",
+      "label": "SeatLamp2",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_65",
+      "label": "SeatLamp3",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    }
+  ],
+  "messageProfileType": "user"
+}

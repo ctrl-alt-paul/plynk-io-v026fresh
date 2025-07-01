@@ -1,6 +1,8 @@
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { tableStyles } from "./table-styles"
 
 const Table = React.forwardRef<
   HTMLTableElement,
@@ -57,10 +59,7 @@ const TableRow = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tr
     ref={ref}
-    className={cn(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
-      className
-    )}
+    className={cn(tableStyles.row, className)}
     {...props}
   />
 ))
@@ -72,10 +71,7 @@ const TableHead = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <th
     ref={ref}
-    className={cn(
-      "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
-      className
-    )}
+    className={cn(tableStyles.head, className)}
     {...props}
   />
 ))
@@ -87,7 +83,7 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
+    className={cn(tableStyles.cell, className)}
     {...props}
   />
 ))

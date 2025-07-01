@@ -1,0 +1,23 @@
+{
+  "process": "GRID.exe",
+  "pollInterval": 16,
+  "outputs": [
+    {
+      "label": "RPM",
+      "type": "Float",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "(value / 100.0)",
+      "useModuleOffset": true,
+      "moduleName": "GRID.exe",
+      "offset": "0x51C720",
+      "offsets": [],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": false
+    }
+  ]
+}

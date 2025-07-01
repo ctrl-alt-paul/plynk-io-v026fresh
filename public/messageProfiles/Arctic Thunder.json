@@ -1,0 +1,35 @@
+
+{
+  "profileName": "Arctic Thunder",
+  "outputs": [
+    {
+      "key": "__MAME_START__",
+      "label": "__MAME_START__",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_2",
+      "label": "LampStart",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "__GAME_NAME__",
+      "label": "Arctic Thunder",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_3",
+      "label": "LampView1",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    }
+  ],
+  "messageProfileType": "user"
+}

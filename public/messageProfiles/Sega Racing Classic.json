@@ -1,0 +1,126 @@
+
+{
+  "profileName": "Sega Racing Classic",
+  "outputs": [
+    {
+      "key": "__MAME_START__",
+      "label": "__MAME_START__",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_2",
+      "label": "LampStart",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_3",
+      "label": "LampView1",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_4",
+      "label": "LampView2",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_5",
+      "label": "LampView3",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_6",
+      "label": "LampView4",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_7",
+      "label": "LampLeader",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_10",
+      "label": "LampAction",
+      "lastValue": 32,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "__GAME_NAME__",
+      "label": "Sega Racing Classic",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_30",
+      "label": "WooferLEDGreen",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_31",
+      "label": "WooferLEDBlue",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_32",
+      "label": "RearLEDRed",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_33",
+      "label": "RearLEDGreen",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_34",
+      "label": "RearLEDBlue",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_35",
+      "label": "SideLEDRed",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_90",
+      "label": "FFB1",
+      "lastValue": 254,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_145",
+      "label": "Throttle1",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    }
+  ],
+  "messageProfileType": "user"
+}

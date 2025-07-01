@@ -1,0 +1,139 @@
+{
+  "process": "LetsGoIsland3D.elf",
+  "pollInterval": 16,
+  "outputs": [
+    {
+      "label": "Start Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "LetsGoIsland3D.elf",
+      "offset": "0x65DA20",
+      "offsets": [
+        "0x44"
+      ],
+      "bitmask": "0x80",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "2P Start Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "LetsGoIsland3D.elf",
+      "offset": "0x65DA20",
+      "offsets": [
+        "0x44"
+      ],
+      "bitmask": "0x10",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Visual Change 3D",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "LetsGoIsland3D.elf",
+      "offset": "0x65DA20",
+      "offsets": [
+        "0x44"
+      ],
+      "bitmask": "0x02",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "1P Air Front",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "LetsGoIsland3D.elf",
+      "offset": "0x65DA20",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x80",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "1P Air Rear",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "LetsGoIsland3D.elf",
+      "offset": "0x65DA20",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x20",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "2P Air Front",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "LetsGoIsland3D.elf",
+      "offset": "0x65DA20",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x40",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "2P Air Rear",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "LetsGoIsland3D.elf",
+      "offset": "0x65DA20",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x10",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    }
+  ]
+}

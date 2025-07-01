@@ -1,0 +1,49 @@
+{
+  "id": "d06d9a13-a3e4-482e-8df4-28ecbc20b257",
+  "name": "TEST GREEN / RED  -  ON / OFF",
+  "description": "",
+  "deviceIP": "192.168.1.198",
+  "importedAt": "2025-06-02T02:57:43.306Z",
+  "rules": [
+    {
+      "id": "e16d40c0-41c6-42f6-aa78-02bb5b7defc0",
+      "triggerType": "exact",
+      "exactValue": 0,
+      "segments": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "effect": 0,
+      "color": [
+        255,
+        0,
+        0
+      ],
+      "brightness": 255,
+      "flash": false
+    },
+    {
+      "id": "52c218f6-6042-4bee-a747-a93d17248b48",
+      "triggerType": "exact",
+      "exactValue": 1,
+      "segments": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "effect": 0,
+      "color": [
+        0,
+        255,
+        0
+      ],
+      "brightness": 255,
+      "flash": false
+    }
+  ]
+}

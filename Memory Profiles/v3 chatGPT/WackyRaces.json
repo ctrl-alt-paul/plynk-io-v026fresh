@@ -1,0 +1,348 @@
+{
+  "process": "wkr.exe",
+  "pollInterval": 16,
+  "outputs": [
+    {
+      "label": "Lamp Start",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x80",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Lamp View1",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x100",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Panel Lamp",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x08",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Slot1 Lamp",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x400",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Slot2 Lamp",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x10",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Slot3 Lamp",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x200",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Seat Lamp 1",
+      "type": "Byte",
+      "address": "",
+      "notes": "Byte >0",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x53"
+      ],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": true
+    },
+    {
+      "label": "Seat Lamp 2",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x51"
+      ],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": true
+    },
+    {
+      "label": "Seat Lamp 3",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x23"
+      ],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": true
+    },
+    {
+      "label": "Seat Lamp 4",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x4D"
+      ],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": true
+    },
+    {
+      "label": "Seat Lamp 5",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x1F"
+      ],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": true
+    },
+    {
+      "label": "Seat Lamp 6",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x49"
+      ],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": true
+    },
+    {
+      "label": "Seat Lamp 7",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x4000",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Force Feedback",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x2000",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "FFB1",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x1000",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "FFB2",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x40",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "FFB3",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x800",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "FFB4",
+      "type": "IntPtr",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "wkr.exe",
+      "offset": "0x7E00590",
+      "offsets": [
+        "0x45"
+      ],
+      "bitmask": "0x20",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    }
+  ]
+}

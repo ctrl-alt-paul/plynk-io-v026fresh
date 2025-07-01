@@ -1,0 +1,167 @@
+{
+  "profileName": "Dirty Drivin'",
+  "outputs": [
+    {
+      "key": "__MAME_START__",
+      "label": "__MAME_START__",
+      "lastValue": 1,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_3",
+      "label": "LampView1",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_124",
+      "label": "Left Indicator 2",
+      "lastValue": 17,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_125",
+      "label": "Left Indicator 3",
+      "lastValue": 100,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_126",
+      "label": "Left Indicator 4",
+      "lastValue": 12,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_127",
+      "label": "Right Indicator 1",
+      "lastValue": 17,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_128",
+      "label": "Right Indicator 2",
+      "lastValue": 17,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_129",
+      "label": "Right Indicator 3",
+      "lastValue": 12,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_130",
+      "label": "Right Indicator 4",
+      "lastValue": 100,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_131",
+      "label": "Speaker 1",
+      "lastValue": 17,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_132",
+      "label": "Speaker 2",
+      "lastValue": 100,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "__GAME_NAME__",
+      "label": "Dirty Drivin",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_133",
+      "label": "Speaker 3",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_134",
+      "label": "Fog Light 1",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_135",
+      "label": "Fog Light 2",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_136",
+      "label": "Fog Light 3",
+      "lastValue": 79,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_137",
+      "label": "Fog Light 4",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_138",
+      "label": "Large Dials",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_139",
+      "label": "Small Dial Left",
+      "lastValue": 100,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_140",
+      "label": "Small Dial Right",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_141",
+      "label": "Base",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_142",
+      "label": "Extra",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    },
+    {
+      "key": "id_143",
+      "label": "Dash",
+      "lastValue": 0,
+      "format": "",
+      "script": ""
+    }
+  ],
+  "messageProfileType": "user"
+}

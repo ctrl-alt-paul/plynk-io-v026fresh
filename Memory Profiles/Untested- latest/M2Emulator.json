@@ -1,0 +1,146 @@
+{
+  "process": "model2emu.exe",
+  "pollInterval": 16,
+  "outputs": [
+    {
+      "label": "Start Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "model2emu.exe",
+      "offset": "0x1AA888",
+      "offsets": [
+        "0x100",
+        "0x824"
+      ],
+      "bitmask": "0x04",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Leader Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "model2emu.exe",
+      "offset": "0x1AA888",
+      "offsets": [
+        "0x100",
+        "0x824"
+      ],
+      "bitmask": "0x80",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "View1 Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "model2emu.exe",
+      "offset": "0x1AA888",
+      "offsets": [
+        "0x100",
+        "0x824"
+      ],
+      "bitmask": "0x08",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "View2 Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "model2emu.exe",
+      "offset": "0x1AA888",
+      "offsets": [
+        "0x100",
+        "0x824"
+      ],
+      "bitmask": "0x10",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "View3 Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "model2emu.exe",
+      "offset": "0x1AA888",
+      "offsets": [
+        "0x100",
+        "0x824"
+      ],
+      "bitmask": "0x20",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "View4 Lamp",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "model2emu.exe",
+      "offset": "0x1AA888",
+      "offsets": [
+        "0x100",
+        "0x824"
+      ],
+      "bitmask": "0x40",
+      "bitwiseOp": "AND",
+      "bitfield": true,
+      "isPointerChain": true
+    },
+    {
+      "label": "Raw Lamps",
+      "type": "Byte",
+      "address": "",
+      "notes": "",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "model2emu.exe",
+      "offset": "0x1AA888",
+      "offsets": [
+        "0x100",
+        "0x824"
+      ],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": true
+    }
+  ]
+}

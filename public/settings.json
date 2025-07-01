@@ -1,0 +1,47 @@
+{
+  "processMonitor": {
+    "isRunning": false,
+    "scanInterval": 3000,
+    "userPreference": false
+  },
+  "messageListener": {
+    "isEnabled": true,
+    "userPreference": false,
+    "timeout": 120,
+    "timeoutEnabled": true
+  },
+  "outputOptimization": {
+    "sendOnlyChangedValues": true,
+    "forceUpdateInterval": 250
+  },
+  "startup": {
+    "startMinimized": false,
+    "startWithWindows": false
+  },
+  "logPage": {
+    "autoScroll": true,
+    "consolidateView": true,
+    "enableVirtualization": true,
+    "categories": {
+      "warning": true,
+      "startup": true,
+      "process": true,
+      "memory": true,
+      "device": true,
+      "dispatch": true,
+      "testing": true,
+      "output": true,
+      "wled": true,
+      "wled-scripts": true,
+      "debug": true,
+      "message-scan": true,
+      "message-listen": true
+    }
+  },
+  "logConfig": {
+    "maxLogEntries": 2500
+  },
+  "masterLogging": {
+    "enabled": false
+  }
+}

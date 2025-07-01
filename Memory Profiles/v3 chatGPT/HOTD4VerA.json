@@ -1,0 +1,23 @@
+{
+  "process": "hod4M.elf",
+  "pollInterval": 16,
+  "outputs": [
+    {
+      "label": "P1 Shoot",
+      "type": "Byte",
+      "address": "",
+      "notes": "Pointer chain to Shoot var",
+      "invert": false,
+      "format": "{value}",
+      "script": "",
+      "useModuleOffset": true,
+      "moduleName": "hod4M.elf",
+      "offset": "(ptr)",
+      "offsets": [],
+      "bitmask": "",
+      "bitwiseOp": "",
+      "bitfield": false,
+      "isPointerChain": false
+    }
+  ]
+}
