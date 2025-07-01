@@ -1,11 +1,15 @@
-
 // This file defines the ElectronAPI interface for TypeScript typechecking
 export interface ElectronAPI {
   platform: string;
   test: () => Promise<any>;
   
   // External link handling
-  openExternal: (url: string) => void;
+  openExternal: (url: string) => Promise<{ success: boolean; error?: string }>;
+  
+  // GitHub OAuth methods
+  githubStartDeviceFlow: () => Promise<{ success: boolean; data?: any; error?: string }>;
+  githubPollForToken: (deviceCode: string) => Promise<{ success: boolean; token?: string; error?: string }>;
+  githubValidateToken: (token: string) => Promise<{ success: boolean; user?: any; error?: string }>;
   
   // PacDrive methods
   testPacDriveDevice: (deviceId: number) => Promise<boolean>;

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export interface GitHubUser {
@@ -72,21 +71,15 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
 
     try {
-      const response = await fetch('https://api.github.com/user', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      });
-
-      if (response.ok) {
-        const user = await response.json();
+      const result = await window.electron?.githubValidateToken(token);
+      
+      if (result?.success && result.user) {
         setState(prev => ({
           ...prev,
           status: 'connected',
           isConnected: true,
           isLoading: false,
-          user,
+          user: result.user,
           error: null,
         }));
       } else {
@@ -98,7 +91,7 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           isConnected: false,
           isLoading: false,
           user: null,
-          error: 'Token expired or invalid',
+          error: result?.error || 'Token expired or invalid',
         }));
       }
     } catch (error) {
@@ -116,24 +109,14 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     
     try {
-      // Start device flow
-      const deviceResponse = await fetch('https://github.com/login/device/code', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          client_id: 'Ov23liAm6kOcI9CcO5Qy', // GitHub OAuth App client ID for PLYNK-IO
-          scope: 'read:user',
-        }),
-      });
-
-      if (!deviceResponse.ok) {
-        throw new Error('Failed to start OAuth flow');
+      // Start device flow using IPC
+      const deviceResult = await window.electron?.githubStartDeviceFlow();
+      
+      if (!deviceResult?.success) {
+        throw new Error(deviceResult?.error || 'Failed to start OAuth flow');
       }
 
-      const deviceData = await deviceResponse.json();
+      const deviceData = deviceResult.data;
       
       // Open GitHub authorization URL in external browser
       if (window.electron?.openExternal) {
@@ -145,49 +128,14 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       // Show user code and poll for completion
       alert(`Please authorize PLYNK-IO on GitHub using this code: ${deviceData.user_code}`);
 
-      // Poll for access token
-      const pollForToken = async (): Promise<string> => {
-        return new Promise((resolve, reject) => {
-          const interval = setInterval(async () => {
-            try {
-              const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
-                method: 'POST',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  client_id: 'Ov23liAm6kOcI9CcO5Qy',
-                  device_code: deviceData.device_code,
-                  grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
-                }),
-              });
+      // Poll for access token using IPC
+      const tokenResult = await window.electron?.githubPollForToken(deviceData.device_code);
+      
+      if (!tokenResult?.success) {
+        throw new Error(tokenResult?.error || 'Failed to get access token');
+      }
 
-              const tokenData = await tokenResponse.json();
-
-              if (tokenData.access_token) {
-                clearInterval(interval);
-                resolve(tokenData.access_token);
-              } else if (tokenData.error && tokenData.error !== 'authorization_pending') {
-                clearInterval(interval);
-                reject(new Error(tokenData.error_description || 'Authorization failed'));
-              }
-            } catch (error) {
-              clearInterval(interval);
-              reject(error);
-            }
-          }, deviceData.interval * 1000);
-
-          // Timeout after 15 minutes
-          setTimeout(() => {
-            clearInterval(interval);
-            reject(new Error('Authorization timeout'));
-          }, 15 * 60 * 1000);
-        });
-      };
-
-      const token = await pollForToken();
-      storeToken(token);
+      storeToken(tokenResult.token);
       await checkTokenValidity();
     } catch (error) {
       setState(prev => ({

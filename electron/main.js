@@ -1,3 +1,4 @@
+
 const { initializeApp } = require('./core/app');
 const { getMainWindow } = require('./state/globals');
 const { ipcMain, shell } = require('electron');
@@ -5,8 +6,10 @@ const { dispatchPacDriveOutput } = require('./devices/pacDriveDispatcher');
 const { logToDevTools } = require('./logger');
 const { isPacDriveInitialized, setPacDriveInitialized } = require('./state/globals');
 const { pacDriveController } = require('./devices/pacDriveController');
+const { registerGitHubHandlers } = require('./ipc/githubHandlers');
 
-// Import the PacDrive dispatcher with correct case
+// Register GitHub OAuth handlers
+registerGitHubHandlers(ipcMain);
 
 // Add handler for opening external URLs
 ipcMain.handle('openExternal', async (event, url) => {

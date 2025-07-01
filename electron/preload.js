@@ -1,4 +1,3 @@
-
 const { contextBridge, ipcRenderer } = require('electron');
 const path = require('path');
 
@@ -110,6 +109,11 @@ contextBridge.exposeInMainWorld('electron', {
   
   // External link handling
   openExternal: (url) => ipcRenderer.invoke('openExternal', url),
+  
+  // GitHub OAuth methods
+  githubStartDeviceFlow: () => ipcRenderer.invoke('github:start-device-flow'),
+  githubPollForToken: (deviceCode) => ipcRenderer.invoke('github:poll-for-token', deviceCode),
+  githubValidateToken: (token) => ipcRenderer.invoke('github:validate-token', token),
   
   // Methods to interact with device store
   getDevices: () => ipcRenderer.invoke('device-store:get-devices'),
