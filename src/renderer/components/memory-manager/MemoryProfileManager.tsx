@@ -87,7 +87,7 @@ const MemoryProfileManager: React.FC<MemoryProfileManagerProps> = ({
 
   const canSaveProfile = memoryAddresses.length > 0;
   const currentProfileType = currentProfile?.memoryProfileType || 'user';
-  const canOverwriteProfile = canSaveProfile && currentProfileName !== null && currentProfileType !== 'default';
+  const canOverwriteProfile = canSaveProfile && currentProfileName !== null && currentProfileType !== 'default' && currentProfileType !== 'community';
 
   const handleProfileSelect = (compositeValue: string) => {
     setSelectedProfileComposite(compositeValue);
@@ -313,6 +313,8 @@ const MemoryProfileManager: React.FC<MemoryProfileManagerProps> = ({
             <TooltipContent>
               {currentProfileType === 'default' 
                 ? "Cannot update default profiles - use Save As New instead"
+                : currentProfileType === 'community'
+                ? "Cannot update community profiles - use Save As New instead"
                 : canOverwriteProfile 
                   ? `Update "${currentProfileName}"` 
                   : "Load a profile first to update it"}

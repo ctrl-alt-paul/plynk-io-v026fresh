@@ -81,8 +81,8 @@ const MessageProfileManager: React.FC<MessageProfileManagerProps> = ({
   }, [currentProfileName, profilesWithType]);
 
   const canSaveProfile = outputs.length > 0;
-  const canOverwriteProfile = canSaveProfile && currentProfileName !== null && currentProfileType !== 'default';
-  const canDeleteProfile = currentProfileName !== null && currentProfileType !== 'default';
+  const canOverwriteProfile = canSaveProfile && currentProfileName !== null && currentProfileType !== 'default' && currentProfileType !== 'community';
+  const canDeleteProfile = currentProfileName !== null && currentProfileType !== 'default' && currentProfileType !== 'community';
 
   const handleProfileSelect = (profileName: string) => {
     const profile = profilesWithType.find(p => p.fileName === profileName);
@@ -114,10 +114,10 @@ const MessageProfileManager: React.FC<MessageProfileManagerProps> = ({
   };
 
   const handleDeleteConfirm = async () => {
-    if (!currentProfileName || currentProfileType === 'default') {
+    if (!currentProfileName || currentProfileType === 'default' || currentProfileType === 'community') {
       toast({
         title: "Error",
-        description: "Cannot delete default profiles",
+        description: "Cannot delete default or community profiles",
         variant: "destructive"
       });
       setDeleteDialogOpen(false);
@@ -243,6 +243,8 @@ const MessageProfileManager: React.FC<MessageProfileManagerProps> = ({
             <TooltipContent>
               {currentProfileType === 'default' 
                 ? "Cannot update default profiles - use Save As New instead"
+                : currentProfileType === 'community'
+                ? "Cannot update community profiles - use Save As New instead"
                 : canOverwriteProfile 
                   ? `Update "${currentProfileName}"` 
                   : "Load a profile first to update it"}
@@ -277,6 +279,8 @@ const MessageProfileManager: React.FC<MessageProfileManagerProps> = ({
             <TooltipContent>
               {currentProfileType === 'default' 
                 ? "Cannot delete default profiles"
+                : currentProfileType === 'community'
+                ? "Cannot delete community profiles"
                 : canDeleteProfile 
                   ? `Delete "${currentProfileName}"` 
                   : "Load a user profile first to delete"}
