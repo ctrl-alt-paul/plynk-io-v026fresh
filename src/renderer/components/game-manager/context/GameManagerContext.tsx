@@ -11,8 +11,8 @@ import { Device } from "@/types/devices";
 import { WLEDOutputProfile } from "@/lib/wledProfiles";
 import { useUnsavedChanges } from "@/components/UnsavedChangesProvider";
 import { 
-  promoteGameProfileDefaultsToUser, 
-  gameProfileUsesDefaultProfiles 
+  promoteGameProfileNonUserProfilesToUser, 
+  gameProfileUsesNonUserProfiles 
 } from "@/lib/profilePromotion";
 
 // Define the mapping interface with source tracking
@@ -593,23 +593,29 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return false;
       }
 
-      // **PHASE 4: Smart Sync Logic - Check if we need to promote default profiles**
+      // **PHASE 4: Smart Sync Logic - Check if we need to promote non-user profiles**
       let profileToSave = currentGameProfile;
       let promotionMessage = "";
 
-      if (gameProfileUsesDefaultProfiles(currentGameProfile)) {
-        console.log("Game Profile uses default profiles, checking for promotion...");
+      if (gameProfileUsesNonUserProfiles(currentGameProfile)) {
+        console.log("Game Profile uses non-user profiles, checking for promotion...");
         
-        const promotionResult = await promoteGameProfileDefaultsToUser(currentGameProfile);
+        const promotionResult = await promoteGameProfileNonUserProfilesToUser(currentGameProfile);
         
         if (promotionResult.memoryPromoted || promotionResult.messagePromoted) {
           profileToSave = promotionResult.updatedProfile;
           
           const promotedItems = [];
-          if (promotionResult.memoryPromoted) promotedItems.push("memory profile");
-          if (promotionResult.messagePromoted) promotedItems.push("message profile");
+          if (promotionResult.memoryPromoted) {
+            const memoryType = currentGameProfile.memoryProfileType === 'default' ? 'default' : 'community';
+            promotedItems.push(`${memoryType} memory profile`);
+          }
+          if (promotionResult.messagePromoted) {
+            const messageType = currentGameProfile.messageProfileType === 'default' ? 'default' : 'community';
+            promotedItems.push(`${messageType} message profile`);
+          }
           
-          promotionMessage = `Default ${promotedItems.join(" and ")} promoted to user profile${promotedItems.length > 1 ? 's' : ''}. `;
+          promotionMessage = `${promotedItems.join(" and ")} promoted to user profile${promotedItems.length > 1 ? 's' : ''}. `;
           console.log(`Promotion completed: ${promotionMessage}`);
         }
       }
