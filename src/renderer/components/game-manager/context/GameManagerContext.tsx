@@ -594,11 +594,12 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
 
       // **PHASE 4: Smart Sync Logic - Check if we need to promote non-user profiles**
+      // Only promote when process name changes (not on every save)
       let profileToSave = currentGameProfile;
       let promotionMessage = "";
 
-      if (gameProfileUsesNonUserProfiles(currentGameProfile)) {
-        console.log("Game Profile uses non-user profiles, checking for promotion...");
+      if (hasProcessNameChange && gameProfileUsesNonUserProfiles(currentGameProfile)) {
+        console.log("Process name changed and Game Profile uses non-user profiles, checking for promotion...");
         
         const promotionResult = await promoteGameProfileNonUserProfilesToUser(currentGameProfile);
         
@@ -669,7 +670,7 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return gameOutput;
       });
       
-      // Check if process name changed and sync module names if needed
+      // Check if process name changed and sync module if needed
       if (hasProcessNameChange) {
         // Manually sync module names before updating the profile
         const syncedOutputs = transformedOutputs.map(output => ({
@@ -788,9 +789,9 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
           return false;
         }
       } else {
-        // No process name change, just update normally
+        // No process name change, just update normally without promotion
         const updatedProfile = {
-          ...profileToSave, // Use potentially promoted profile
+          ...profileToSave, // Use current profile (no promotion needed)
           processName: formValues.processName,
           messageName: formValues.gameName || undefined,
           pollInterval: formValues.pollInterval,
@@ -821,10 +822,8 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
           setOriginalMappings(JSON.parse(JSON.stringify(currentMappings)));
           clearUnsavedChanges(); // Clear unsaved changes after successful save
           
-          // Enhanced success message with promotion info
-          const baseMessage = "Profile updated successfully";
-          const finalMessage = promotionMessage ? promotionMessage + baseMessage : baseMessage;
-          toast.success(finalMessage);
+          // Success message without promotion info since no promotion occurred
+          toast.success("Profile updated successfully");
           
           // Refresh mappings after successful save
           await loadCombinedOutputs(
