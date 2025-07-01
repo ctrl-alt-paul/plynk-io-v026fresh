@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { GitHubDeviceDialog } from '@/components/GitHubDeviceDialog';
 
@@ -61,6 +62,10 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     connectedUser: null as GitHubUser | null,
   });
 
+  // Track if a connection attempt is in progress
+  const isConnectingRef = useRef(false);
+  const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const { toast } = useToast();
 
   const getStoredToken = (): string | null => {
@@ -75,6 +80,40 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const removeToken = (): void => {
     localStorage.removeItem(STORAGE_KEY);
+  };
+
+  const cancelGitHubAuth = (): void => {
+    console.log('Cancelling GitHub authorization...');
+    
+    // Clear any ongoing polling
+    if (pollingTimeoutRef.current) {
+      clearTimeout(pollingTimeoutRef.current);
+      pollingTimeoutRef.current = null;
+    }
+    
+    // Reset connection state
+    isConnectingRef.current = false;
+    
+    // Reset dialog state
+    setDeviceDialog({
+      open: false,
+      userCode: '',
+      verificationUri: '',
+      isPolling: false,
+      isConnected: false,
+      connectedUser: null,
+    });
+    
+    setState(prev => ({
+      ...prev,
+      isLoading: false,
+      error: null,
+    }));
+    
+    toast({
+      title: "GitHub Authorization Cancelled",
+      description: "The GitHub connection process has been cancelled.",
+    });
   };
 
   const checkTokenValidity = async (): Promise<void> => {
@@ -121,6 +160,13 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   const connectGitHub = async (): Promise<void> => {
+    // Prevent multiple simultaneous connection attempts
+    if (isConnectingRef.current) {
+      console.log('GitHub connection already in progress, ignoring request');
+      return;
+    }
+    
+    isConnectingRef.current = true;
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     
     try {
@@ -159,12 +205,12 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       storeToken(tokenResult.token);
       await checkTokenValidity();
       
-      // Update dialog to show success state instead of closing
+      // Update dialog to show success state
       setDeviceDialog(prev => ({
         ...prev,
         isPolling: false,
         isConnected: true,
-        connectedUser: state.user, // This will be updated by checkTokenValidity
+        connectedUser: state.user,
       }));
 
       // Wait a bit for state to update, then use the updated user info
@@ -202,6 +248,8 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      isConnectingRef.current = false;
     }
   };
 
@@ -248,20 +296,12 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   return (
     <GitHubAuthContext.Provider value={value}>
       {children}
-      {/* Updated device dialog with new props */}
+      {/* Updated device dialog with cancel functionality */}
       <GitHubDeviceDialog
         open={deviceDialog.open}
         onOpenChange={(open) => {
           if (!open) {
-            // Reset dialog state when manually closed
-            setDeviceDialog({
-              open: false,
-              userCode: '',
-              verificationUri: '',
-              isPolling: false,
-              isConnected: false,
-              connectedUser: null,
-            });
+            cancelGitHubAuth();
           }
         }}
         userCode={deviceDialog.userCode}
@@ -269,6 +309,7 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         isPolling={deviceDialog.isPolling}
         isConnected={deviceDialog.isConnected}
         connectedUser={deviceDialog.connectedUser}
+        onCancel={cancelGitHubAuth}
       />
     </GitHubAuthContext.Provider>
   );

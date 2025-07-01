@@ -21,6 +21,7 @@ interface GitHubDeviceDialogProps {
   isPolling: boolean;
   isConnected: boolean;
   connectedUser: GitHubUser | null;
+  onCancel: () => void;
 }
 
 export function GitHubDeviceDialog({
@@ -31,6 +32,7 @@ export function GitHubDeviceDialog({
   isPolling,
   isConnected,
   connectedUser,
+  onCancel,
 }: GitHubDeviceDialogProps) {
   const [copied, setCopied] = useState(false);
 
@@ -52,8 +54,12 @@ export function GitHubDeviceDialog({
     }
   };
 
-  const handleClose = () => {
-    onOpenChange(false);
+  const handleButtonClick = () => {
+    if (isConnected) {
+      onOpenChange(false);
+    } else {
+      onCancel();
+    }
   };
 
   return (
@@ -100,10 +106,6 @@ export function GitHubDeviceDialog({
               <p className="text-sm text-muted-foreground">
                 You can now submit your projects to GitHub and view your submissions.
               </p>
-              
-              <Button onClick={handleClose} className="w-full">
-                Close
-              </Button>
             </div>
           ) : (
             // Authorization flow state
@@ -162,6 +164,11 @@ export function GitHubDeviceDialog({
               )}
             </>
           )}
+          
+          {/* Single button that changes based on connection state */}
+          <Button onClick={handleButtonClick} variant="outline" className="w-full">
+            {isConnected ? 'Close' : 'Cancel'}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
