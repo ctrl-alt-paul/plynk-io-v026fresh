@@ -6,16 +6,16 @@ import { isElectron } from "@/utils/isElectron";
 
 export interface ProfileWithType {
   profile: MemoryProfile | MessageProfile;
-  type: 'default' | 'user';
+  type: 'default' | 'user' | 'community';
   fileName: string;
 }
 
 /**
- * Enhanced profile manager that handles both default and user profiles
+ * Enhanced profile manager that handles default, user, and community profiles
  */
 export const profileManager = {
   /**
-   * List all memory profiles from both default and user directories
+   * List all memory profiles from default, community, and user directories
    */
   listMemoryProfiles: async (): Promise<ProfileWithType[]> => {
     const profiles: ProfileWithType[] = [];
@@ -50,6 +50,23 @@ export const profileManager = {
           }
         }
       }
+
+      // Load community profiles
+      if (isElectron() && window.electron?.ipcRenderer) {
+        const communityProfiles = await window.electron.ipcRenderer.invoke('memory-profile:list-community');
+        if (communityProfiles && communityProfiles.success && communityProfiles.profiles) {
+          for (const fileName of communityProfiles.profiles) {
+            const response = await window.electron.ipcRenderer.invoke('memory-profile:get-community', fileName);
+            if (response && response.success && response.profile) {
+              profiles.push({
+                profile: response.profile,
+                type: 'community',
+                fileName
+              });
+            }
+          }
+        }
+      }
       
       return profiles;
     } catch (error) {
@@ -59,7 +76,7 @@ export const profileManager = {
   },
 
   /**
-   * List all message profiles from both default and user directories
+   * List all message profiles from default, community, and user directories
    */
   listMessageProfiles: async (): Promise<ProfileWithType[]> => {
     const profiles: ProfileWithType[] = [];
@@ -98,6 +115,23 @@ export const profileManager = {
           }
         }
       }
+
+      // Load community profiles
+      if (isElectron() && window.electron?.ipcRenderer) {
+        const communityProfiles = await window.electron.ipcRenderer.invoke('message-profile:list-community');
+        if (Array.isArray(communityProfiles)) {
+          for (const fileName of communityProfiles) {
+            const response = await window.electron.ipcRenderer.invoke('message-profile:get-community', fileName);
+            if (response && response.success && response.profile) {
+              profiles.push({
+                profile: response.profile,
+                type: 'community',
+                fileName
+              });
+            }
+          }
+        }
+      }
       
       return profiles;
     } catch (error) {
@@ -109,13 +143,18 @@ export const profileManager = {
   /**
    * Get a specific memory profile by filename and type
    */
-  getMemoryProfile: async (fileName: string, type: 'default' | 'user'): Promise<MemoryProfile | null> => {
+  getMemoryProfile: async (fileName: string, type: 'default' | 'user' | 'community'): Promise<MemoryProfile | null> => {
     try {
       if (type === 'user') {
         return await profileStorage.getMemoryProfile(fileName);
-      } else {
+      } else if (type === 'default') {
         if (isElectron() && window.electron?.getDefaultMemoryProfile) {
           const response = await window.electron.getDefaultMemoryProfile(fileName);
+          return response && response.success ? response.profile : null;
+        }
+      } else if (type === 'community') {
+        if (isElectron() && window.electron?.ipcRenderer) {
+          const response = await window.electron.ipcRenderer.invoke('memory-profile:get-community', fileName);
           return response && response.success ? response.profile : null;
         }
       }
@@ -129,16 +168,21 @@ export const profileManager = {
   /**
    * Get a specific message profile by filename and type
    */
-  getMessageProfile: async (fileName: string, type: 'default' | 'user'): Promise<MessageProfile | null> => {
+  getMessageProfile: async (fileName: string, type: 'default' | 'user' | 'community'): Promise<MessageProfile | null> => {
     try {
       if (type === 'user') {
         if (isElectron() && window.electron?.ipcRenderer) {
           const response = await window.electron.ipcRenderer.invoke('message-profile:get', fileName);
           return response && response.success ? response.profile : null;
         }
-      } else {
+      } else if (type === 'default') {
         if (isElectron() && window.electron?.ipcRenderer) {
           const response = await window.electron.ipcRenderer.invoke('message-profile:get-default', fileName);
+          return response && response.success ? response.profile : null;
+        }
+      } else if (type === 'community') {
+        if (isElectron() && window.electron?.ipcRenderer) {
+          const response = await window.electron.ipcRenderer.invoke('message-profile:get-community', fileName);
           return response && response.success ? response.profile : null;
         }
       }
@@ -146,6 +190,50 @@ export const profileManager = {
     } catch (error) {
       console.error('Error getting message profile:', error);
       return null;
+    }
+  },
+
+  /**
+   * Save a memory profile based on its type
+   */
+  saveMemoryProfile: async (fileName: string, profile: MemoryProfile, type: 'user' | 'community'): Promise<boolean> => {
+    try {
+      if (type === 'user') {
+        const result = await profileStorage.saveMemoryProfile(fileName, profile);
+        return result.success;
+      } else if (type === 'community') {
+        if (isElectron() && window.electron?.ipcRenderer) {
+          const result = await window.electron.ipcRenderer.invoke('memory-profile:save-community', fileName, profile);
+          return result && result.success;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error('Error saving memory profile:', error);
+      return false;
+    }
+  },
+
+  /**
+   * Save a message profile based on its type
+   */
+  saveMessageProfile: async (fileName: string, profile: MessageProfile, type: 'user' | 'community'): Promise<boolean> => {
+    try {
+      if (type === 'user') {
+        if (isElectron() && window.electron?.ipcRenderer) {
+          const result = await window.electron.ipcRenderer.invoke('message-profile:save', fileName, profile);
+          return result && result.success;
+        }
+      } else if (type === 'community') {
+        if (isElectron() && window.electron?.ipcRenderer) {
+          const result = await window.electron.ipcRenderer.invoke('message-profile:save-community', fileName, profile);
+          return result && result.success;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error('Error saving message profile:', error);
+      return false;
     }
   },
 

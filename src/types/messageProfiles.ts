@@ -11,7 +11,7 @@ export interface MessageProfile {
   profileName: string;
   outputs: MessageProfileOutput[];
   /**
-   * The type of message profile - 'default' for built-in profiles, 'user' for user-created profiles
+   * The type of message profile - 'default' for built-in profiles, 'user' for user-created profiles, 'community' for community profiles
    */
-  messageProfileType?: 'default' | 'user';
+  messageProfileType?: 'default' | 'user' | 'community';
 }

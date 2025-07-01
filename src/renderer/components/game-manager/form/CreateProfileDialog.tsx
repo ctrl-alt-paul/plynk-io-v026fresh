@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +33,7 @@ interface CreateProfileDialogProps {
 
 interface ProfileOption {
   fileName: string;
-  type: 'default' | 'user';
+  type: 'default' | 'user' | 'community';
   displayName: string;
 }
 
@@ -92,7 +91,7 @@ export const CreateProfileDialog: React.FC<CreateProfileDialogProps> = ({
     
     // Parse composite value to get type and fileName
     const [type, fileName] = compositeValue.split(':');
-    const profileType = type as 'default' | 'user';
+    const profileType = type as 'default' | 'user' | 'community';
     
     // Auto-populate process name when memory profile is selected
     try {
@@ -110,7 +109,7 @@ export const CreateProfileDialog: React.FC<CreateProfileDialogProps> = ({
     
     // Parse composite value to get type and fileName
     const [type, fileName] = compositeValue.split(':');
-    const profileType = type as 'default' | 'user';
+    const profileType = type as 'default' | 'user' | 'community';
     
     // Auto-populate game name when message profile is selected
     try {
@@ -128,7 +127,7 @@ export const CreateProfileDialog: React.FC<CreateProfileDialogProps> = ({
   };
 
   // Helper function to load memory profile outputs
-  const loadMemoryOutputs = async (memoryProfileName: string, profileType: 'default' | 'user'): Promise<any[]> => {
+  const loadMemoryOutputs = async (memoryProfileName: string, profileType: 'default' | 'user' | 'community'): Promise<any[]> => {
     try {
       const profile = await profileManager.getMemoryProfile(memoryProfileName, profileType);
       if (profile?.outputs) {
@@ -141,7 +140,7 @@ export const CreateProfileDialog: React.FC<CreateProfileDialogProps> = ({
   };
 
   // Helper function to load message profile outputs
-  const loadMessageOutputs = async (messageProfileName: string, profileType: 'default' | 'user'): Promise<any[]> => {
+  const loadMessageOutputs = async (messageProfileName: string, profileType: 'default' | 'user' | 'community'): Promise<any[]> => {
     try {
       const profile = await profileManager.getMessageProfile(messageProfileName, profileType);
       if (profile?.outputs) {
@@ -219,7 +218,7 @@ export const CreateProfileDialog: React.FC<CreateProfileDialogProps> = ({
       // Load memory profile outputs
       if (selectedMemoryProfile) {
         const [memoryType, memoryFileName] = selectedMemoryProfile.split(':');
-        const memoryProfileType = memoryType as 'default' | 'user';
+        const memoryProfileType = memoryType as 'default' | 'user' | 'community';
         const memoryOutputs = await loadMemoryOutputs(memoryFileName, memoryProfileType);
         const convertedMemoryOutputs = memoryOutputs.map(output => convertToGameProfileOutput(output, false));
         allOutputs.push(...convertedMemoryOutputs);
@@ -228,7 +227,7 @@ export const CreateProfileDialog: React.FC<CreateProfileDialogProps> = ({
       // Load message profile outputs
       if (selectedMessageProfile) {
         const [messageType, messageFileName] = selectedMessageProfile.split(':');
-        const messageProfileType = messageType as 'default' | 'user';
+        const messageProfileType = messageType as 'default' | 'user' | 'community';
         const messageOutputs = await loadMessageOutputs(messageFileName, messageProfileType);
         const convertedMessageOutputs = messageOutputs.map(output => {
           const memoryFormatOutput = convertMessageOutputToMemoryFormat(output);
@@ -252,8 +251,8 @@ export const CreateProfileDialog: React.FC<CreateProfileDialogProps> = ({
         })() : 
         undefined;
 
-      const memoryProfileType = selectedMemoryProfile ? selectedMemoryProfile.split(':')[0] as 'default' | 'user' : undefined;
-      const messageProfileType = selectedMessageProfile ? selectedMessageProfile.split(':')[0] as 'default' | 'user' : undefined;
+      const memoryProfileType = selectedMemoryProfile ? selectedMemoryProfile.split(':')[0] as 'default' | 'user' | 'community' : undefined;
+      const messageProfileType = selectedMessageProfile ? selectedMessageProfile.split(':')[0] as 'default' | 'user' | 'community' : undefined;
 
       const newProfile: GameProfile = {
         id: uuidv4(),
@@ -292,8 +291,10 @@ export const CreateProfileDialog: React.FC<CreateProfileDialogProps> = ({
 
   // Group profiles by type for rendering
   const defaultMemoryProfiles = memoryProfiles.filter(p => p.type === 'default');
+  const communityMemoryProfiles = memoryProfiles.filter(p => p.type === 'community');
   const userMemoryProfiles = memoryProfiles.filter(p => p.type === 'user');
   const defaultMessageProfiles = messageProfiles.filter(p => p.type === 'default');
+  const communityMessageProfiles = messageProfiles.filter(p => p.type === 'community');
   const userMessageProfiles = messageProfiles.filter(p => p.type === 'user');
 
   return (
@@ -371,7 +372,23 @@ export const CreateProfileDialog: React.FC<CreateProfileDialogProps> = ({
                       ))}
                     </SelectGroup>
                   )}
-                  {defaultMemoryProfiles.length > 0 && userMemoryProfiles.length > 0 && <SelectSeparator />}
+                  {(defaultMemoryProfiles.length > 0 && communityMemoryProfiles.length > 0) && <SelectSeparator />}
+                  {communityMemoryProfiles.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Community Profiles</SelectLabel>
+                      {communityMemoryProfiles.map((profile) => (
+                        <SelectItem key={`community-${profile.fileName}`} value={`community:${profile.fileName}`}>
+                          <div className="flex items-center gap-2">
+                            <span>{profile.displayName}</span>
+                            <span className="text-xs bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded">
+                              Community
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
+                  {((defaultMemoryProfiles.length > 0 || communityMemoryProfiles.length > 0) && userMemoryProfiles.length > 0) && <SelectSeparator />}
                   {userMemoryProfiles.length > 0 && (
                     <SelectGroup>
                       <SelectLabel>User Profiles</SelectLabel>
@@ -420,7 +437,23 @@ export const CreateProfileDialog: React.FC<CreateProfileDialogProps> = ({
                       ))}
                     </SelectGroup>
                   )}
-                  {defaultMessageProfiles.length > 0 && userMessageProfiles.length > 0 && <SelectSeparator />}
+                  {(defaultMessageProfiles.length > 0 && communityMessageProfiles.length > 0) && <SelectSeparator />}
+                  {communityMessageProfiles.length > 0 && (
+                    <SelectGroup>
+                      <SelectLabel>Community Profiles</SelectLabel>
+                      {communityMessageProfiles.map((profile) => (
+                        <SelectItem key={`community-${profile.fileName}`} value={`community:${profile.fileName}`}>
+                          <div className="flex items-center gap-2">
+                            <span>{profile.displayName}</span>
+                            <span className="text-xs bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded">
+                              Community
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  )}
+                  {((defaultMessageProfiles.length > 0 || communityMessageProfiles.length > 0) && userMessageProfiles.length > 0) && <SelectSeparator />}
                   {userMessageProfiles.length > 0 && (
                     <SelectGroup>
                       <SelectLabel>User Profiles</SelectLabel>

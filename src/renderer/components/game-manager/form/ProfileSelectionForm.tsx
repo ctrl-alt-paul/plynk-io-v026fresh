@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -23,8 +22,10 @@ const ProfileDisplay: React.FC<{ compositeValue: string, profilesWithType: Profi
     const displayName = fileName.replace('.json', '');
     const badgeClasses = type === 'default' 
       ? 'text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded' 
+      : type === 'community'
+      ? 'text-xs bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded'
       : 'text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded';
-    const badgeText = type === 'default' ? 'Default' : 'User';
+    const badgeText = type === 'default' ? 'Default' : type === 'community' ? 'Community' : 'User';
     
     return (
       <div className="flex items-center gap-2">

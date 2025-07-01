@@ -49,7 +49,7 @@ export interface MemoryProfile {
   lastModified?: number;
   usedByGameProfiles?: string[]; // Names of game profiles using this memory profile
   /**
-   * The type of memory profile - 'default' for built-in profiles, 'user' for user-created profiles
+   * The type of memory profile - 'default' for built-in profiles, 'user' for user-created profiles, 'community' for community profiles
    */
-  memoryProfileType?: 'default' | 'user';
+  memoryProfileType?: 'default' | 'user' | 'community';
 }

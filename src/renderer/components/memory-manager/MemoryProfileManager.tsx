@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   FileUp, FileCheck, Code, RefreshCw, Trash2
@@ -23,7 +22,7 @@ interface MemoryProfileManagerProps {
   isLoading: boolean;
   isSaving: boolean;
   selectedProcess: string | null;
-  onProfileSelect: (profileName: string, profileType: 'default' | 'user') => void;
+  onProfileSelect: (profileName: string, profileType: 'default' | 'user' | 'community') => void;
   onSaveAsNew: () => void;
   onOverwrite: () => void;
   onDelete: () => void;
@@ -95,7 +94,7 @@ const MemoryProfileManager: React.FC<MemoryProfileManagerProps> = ({
     
     // Parse composite value to get both type and fileName
     const [type, fileName] = compositeValue.split(':');
-    onProfileSelect(fileName, type as 'default' | 'user');
+    onProfileSelect(fileName, type as 'default' | 'user' | 'community');
   };
 
   const handleSaveAsNew = () => {
@@ -191,6 +190,7 @@ const MemoryProfileManager: React.FC<MemoryProfileManagerProps> = ({
 
   // Group profiles by type
   const defaultProfiles = profilesWithType.filter(p => p.type === 'default');
+  const communityProfiles = profilesWithType.filter(p => p.type === 'community');
   const userProfiles = profilesWithType.filter(p => p.type === 'user');
 
   // Helper function to get display value for selected profile
@@ -201,15 +201,18 @@ const MemoryProfileManager: React.FC<MemoryProfileManagerProps> = ({
     const profile = profilesWithType.find(p => p.type === type && p.fileName === fileName);
     
     if (profile) {
+      const badgeClasses = type === 'default' 
+        ? 'bg-blue-100 text-blue-800' 
+        : type === 'community'
+        ? 'bg-orange-100 text-orange-800'
+        : 'bg-green-100 text-green-800';
+      const badgeText = type === 'default' ? 'Default' : type === 'community' ? 'Community' : 'User';
+      
       return (
         <div className="flex items-center gap-2">
           <span>{fileName}</span>
-          <span className={`px-2 py-1 text-xs font-medium rounded ${
-            type === 'default' 
-              ? 'bg-blue-100 text-blue-800' 
-              : 'bg-green-100 text-green-800'
-          }`}>
-            {type === 'default' ? 'Default' : 'User'}
+          <span className={`px-2 py-1 text-xs font-medium rounded ${badgeClasses}`}>
+            {badgeText}
           </span>
         </div>
       );
@@ -246,6 +249,22 @@ const MemoryProfileManager: React.FC<MemoryProfileManagerProps> = ({
                       <div className="flex items-center gap-2">
                         <span>{fileName}</span>
                         <span className="px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800">Default</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </>
+              )}
+
+              {communityProfiles.length > 0 && (
+                <>
+                  <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b">
+                    Community Profiles
+                  </div>
+                  {communityProfiles.map(({ fileName, type }) => (
+                    <SelectItem key={`community-${fileName}`} value={`${type}:${fileName}`}>
+                      <div className="flex items-center gap-2">
+                        <span>{fileName}</span>
+                        <span className="px-2 py-1 text-xs font-medium rounded bg-orange-100 text-orange-800">Community</span>
                       </div>
                     </SelectItem>
                   ))}

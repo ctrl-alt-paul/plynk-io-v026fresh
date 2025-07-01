@@ -61,9 +61,9 @@ export interface GameProfile {
   /**
    * Indicates if the memory profile is a default profile (true) or user profile (false)
    */
-  memoryProfileType?: 'default' | 'user';
+  memoryProfileType?: 'default' | 'user' | 'community';
   /**
    * Indicates if the message profile is a default profile (true) or user profile (false)
    */
-  messageProfileType?: 'default' | 'user';
+  messageProfileType?: 'default' | 'user' | 'community';
 }
