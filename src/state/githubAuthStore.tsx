@@ -1,6 +1,6 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
+import { GitHubDeviceDialog } from '@/components/GitHubDeviceDialog';
 
 export interface GitHubUser {
   login: string;
@@ -49,6 +49,14 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     status: 'loading',
     user: null,
     error: null,
+  });
+
+  // Add dialog state
+  const [deviceDialog, setDeviceDialog] = useState({
+    open: false,
+    userCode: '',
+    verificationUri: '',
+    isPolling: false,
   });
 
   const { toast } = useToast();
@@ -123,25 +131,29 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
 
       const deviceData = deviceResult.data;
-      console.log('Device flow started, opening browser...');
+      console.log('Device flow started, showing dialog...');
       
-      // Open GitHub authorization URL in external browser
-      if (window.electron?.openExternal) {
-        await window.electron.openExternal(deviceData.verification_uri);
-      } else {
-        window.open(deviceData.verification_uri, '_blank');
-      }
-
-      // Show user code in toast instead of alert
-      toast({
-        title: "GitHub Authorization Required",
-        description: `Please authorize PLYNK-IO using code: ${deviceData.user_code}`,
-        duration: 10000,
+      // Show device dialog instead of toast and opening browser immediately
+      setDeviceDialog({
+        open: true,
+        userCode: deviceData.user_code,
+        verificationUri: deviceData.verification_uri,
+        isPolling: false,
       });
 
+      // Start polling in the background
       console.log('Polling for access token...');
-      // Poll for access token using IPC
+      setDeviceDialog(prev => ({ ...prev, isPolling: true }));
+      
       const tokenResult = await window.electron?.githubPollForToken(deviceData.device_code);
+      
+      // Close dialog and reset state
+      setDeviceDialog({
+        open: false,
+        userCode: '',
+        verificationUri: '',
+        isPolling: false,
+      });
       
       if (!tokenResult?.success) {
         throw new Error(tokenResult?.error || 'Failed to get access token');
@@ -158,6 +170,15 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     } catch (error) {
       console.error('GitHub connection error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to connect to GitHub';
+      
+      // Close dialog on error
+      setDeviceDialog({
+        open: false,
+        userCode: '',
+        verificationUri: '',
+        isPolling: false,
+      });
+      
       setState(prev => ({
         ...prev,
         isLoading: false,
@@ -215,6 +236,20 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   return (
     <GitHubAuthContext.Provider value={value}>
       {children}
+      {/* Add the device dialog */}
+      <GitHubDeviceDialog
+        open={deviceDialog.open}
+        onOpenChange={(open) => {
+          if (!open && deviceDialog.isPolling) {
+            // Don't allow closing while polling unless there's an error
+            return;
+          }
+          setDeviceDialog(prev => ({ ...prev, open }));
+        }}
+        userCode={deviceDialog.userCode}
+        verificationUri={deviceDialog.verificationUri}
+        isPolling={deviceDialog.isPolling}
+      />
     </GitHubAuthContext.Provider>
   );
 };
