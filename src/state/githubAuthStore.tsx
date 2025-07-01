@@ -1,4 +1,6 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useToast } from "@/hooks/use-toast";
 
 export interface GitHubUser {
   login: string;
@@ -49,6 +51,8 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     error: null,
   });
 
+  const { toast } = useToast();
+
   const getStoredToken = (): string | null => {
     const encrypted = localStorage.getItem(STORAGE_KEY);
     return encrypted ? decryptToken(encrypted) : null;
@@ -95,6 +99,7 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         }));
       }
     } catch (error) {
+      console.error('Token validation error:', error);
       setState(prev => ({
         ...prev,
         status: 'invalid',
@@ -110,6 +115,7 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     
     try {
       // Start device flow using IPC
+      console.log('Starting GitHub device flow...');
       const deviceResult = await window.electron?.githubStartDeviceFlow();
       
       if (!deviceResult?.success) {
@@ -117,17 +123,23 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
 
       const deviceData = deviceResult.data;
+      console.log('Device flow started, opening browser...');
       
       // Open GitHub authorization URL in external browser
       if (window.electron?.openExternal) {
-        window.electron.openExternal(deviceData.verification_uri);
+        await window.electron.openExternal(deviceData.verification_uri);
       } else {
         window.open(deviceData.verification_uri, '_blank');
       }
 
-      // Show user code and poll for completion
-      alert(`Please authorize PLYNK-IO on GitHub using this code: ${deviceData.user_code}`);
+      // Show user code in toast instead of alert
+      toast({
+        title: "GitHub Authorization Required",
+        description: `Please authorize PLYNK-IO using code: ${deviceData.user_code}`,
+        duration: 10000,
+      });
 
+      console.log('Polling for access token...');
       // Poll for access token using IPC
       const tokenResult = await window.electron?.githubPollForToken(deviceData.device_code);
       
@@ -135,14 +147,28 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         throw new Error(tokenResult?.error || 'Failed to get access token');
       }
 
+      console.log('Token received, validating...');
       storeToken(tokenResult.token);
       await checkTokenValidity();
+      
+      toast({
+        title: "GitHub Connected",
+        description: "Successfully connected to GitHub!",
+      });
     } catch (error) {
+      console.error('GitHub connection error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to connect to GitHub';
       setState(prev => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to connect to GitHub',
+        error: errorMessage,
       }));
+      
+      toast({
+        title: "GitHub Connection Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
   };
 
@@ -154,6 +180,11 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       status: 'disconnected',
       user: null,
       error: null,
+    });
+    
+    toast({
+      title: "GitHub Disconnected",
+      description: "Successfully disconnected from GitHub",
     });
   };
 
