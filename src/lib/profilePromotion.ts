@@ -27,7 +27,6 @@ export const promoteDefaultMemoryProfileToUser = async (fileName: string): Promi
     // Save as user profile
     const success = await profileStorage.saveMemoryProfile(fileName, userProfile);
     if (success) {
-      console.log(`Promoted default memory profile to user: ${fileName}`);
       return true;
     }
     
@@ -59,7 +58,6 @@ export const promoteCommunityMemoryProfileToUser = async (fileName: string): Pro
     // Save as user profile
     const success = await profileStorage.saveMemoryProfile(fileName, userProfile);
     if (success) {
-      console.log(`Promoted community memory profile to user: ${fileName}`);
       return true;
     }
     
@@ -91,7 +89,6 @@ export const promoteDefaultMessageProfileToUser = async (fileName: string): Prom
     // Save as user profile
     const success = await profileStorage.saveMessageProfile(fileName, userProfile);
     if (success) {
-      console.log(`Promoted default message profile to user: ${fileName}`);
       return true;
     }
     
@@ -123,7 +120,6 @@ export const promoteCommunityMessageProfileToUser = async (fileName: string): Pr
     // Save as user profile
     const success = await profileStorage.saveMessageProfile(fileName, userProfile);
     if (success) {
-      console.log(`Promoted community message profile to user: ${fileName}`);
       return true;
     }
     
@@ -156,7 +152,6 @@ export const promoteGameProfileNonUserProfilesToUser = async (gameProfile: GameP
     
     if (memoryPromoted) {
       updatedProfile.memoryProfileType = 'user';
-      console.log(`Memory profile promoted: ${gameProfile.memoryFile}`);
     }
   }
 
@@ -170,7 +165,6 @@ export const promoteGameProfileNonUserProfilesToUser = async (gameProfile: GameP
     
     if (messagePromoted) {
       updatedProfile.messageProfileType = 'user';
-      console.log(`Message profile promoted: ${gameProfile.messageFile}`);
     }
   }
 

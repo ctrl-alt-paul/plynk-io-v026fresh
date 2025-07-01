@@ -599,8 +599,6 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
       let promotionMessage = "";
 
       if (hasProcessNameChange && gameProfileUsesNonUserProfiles(currentGameProfile)) {
-        console.log("Process name changed and Game Profile uses non-user profiles, checking for promotion...");
-        
         const promotionResult = await promoteGameProfileNonUserProfilesToUser(currentGameProfile);
         
         if (promotionResult.memoryPromoted || promotionResult.messagePromoted) {
@@ -617,7 +615,6 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
           }
           
           promotionMessage = `${promotedItems.join(" and ")} promoted to user profile${promotedItems.length > 1 ? 's' : ''}. `;
-          console.log(`Promotion completed: ${promotionMessage}`);
         }
       }
       
@@ -719,8 +716,6 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
           // Sync the associated memory profile if it exists and is now a user profile
           if (updatedProfile.memoryFile && updatedProfile.memoryProfileType === 'user' && window.electron?.getMemoryProfile && window.electron?.saveMemoryProfile) {
             try {
-              console.log(`Syncing memory profile: ${updatedProfile.memoryFile}`);
-              
               // Load the memory profile (now from user directory)
               const memoryResponse = await window.electron.getMemoryProfile(updatedProfile.memoryFile);
               
@@ -732,7 +727,6 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 const updatedMemoryOutputs = memoryProfile.outputs.map((output: any) => {
                   if (output.moduleName === originalProcessName) {
                     hasMemoryChanges = true;
-                    console.log(`Updating memory output '${output.label}' moduleName from '${originalProcessName}' to '${formValues.processName}'`);
                     return {
                       ...output,
                       moduleName: formValues.processName
@@ -753,18 +747,14 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
                   const saveResponse = await window.electron.saveMemoryProfile(updatedProfile.memoryFile, updatedMemoryProfile);
                   
                   if (saveResponse && saveResponse.success) {
-                    console.log(`Memory profile ${updatedProfile.memoryFile} synchronized successfully`);
                     toast.success(finalMessage);
                   } else {
-                    console.error(`Failed to save memory profile: ${saveResponse?.error}`);
                     toast.warning(finalMessage + " but memory profile sync failed");
                   }
                 } else {
-                  console.log("No memory profile outputs needed updating");
                   toast.success(finalMessage);
                 }
               } else {
-                console.error(`Failed to load memory profile: ${memoryResponse?.error}`);
                 toast.warning(finalMessage + " but memory profile could not be loaded for sync");
               }
             } catch (error) {
@@ -863,9 +853,7 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
           const availableProfiles = await profileManager.listMemoryProfiles();
           const profileWithType = availableProfiles.find(p => p.fileName === enhancedProfile.memoryFile);
           enhancedProfile.memoryProfileType = profileWithType?.type || 'user';
-          console.log(`Detected memory profile type: ${enhancedProfile.memoryProfileType} for ${enhancedProfile.memoryFile}`);
         } catch (error) {
-          console.error("Error detecting memory profile type:", error);
           enhancedProfile.memoryProfileType = 'user'; // Default fallback
         }
       }
@@ -876,9 +864,7 @@ export const GameManagerProvider: React.FC<{ children: React.ReactNode }> = ({ c
           const availableProfiles = await profileManager.listMessageProfiles();
           const profileWithType = availableProfiles.find(p => p.fileName === enhancedProfile.messageFile);
           enhancedProfile.messageProfileType = profileWithType?.type || 'user';
-          console.log(`Detected message profile type: ${enhancedProfile.messageProfileType} for ${enhancedProfile.messageFile}`);
         } catch (error) {
-          console.error("Error detecting message profile type:", error);
           enhancedProfile.messageProfileType = 'user'; // Default fallback
         }
       }
