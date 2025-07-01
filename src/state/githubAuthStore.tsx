@@ -51,12 +51,14 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     error: null,
   });
 
-  // Add dialog state
+  // Updated dialog state to include success information
   const [deviceDialog, setDeviceDialog] = useState({
     open: false,
     userCode: '',
     verificationUri: '',
     isPolling: false,
+    isConnected: false,
+    connectedUser: null as GitHubUser | null,
   });
 
   const { toast } = useToast();
@@ -133,12 +135,14 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       const deviceData = deviceResult.data;
       console.log('Device flow started, showing dialog...');
       
-      // Show device dialog instead of toast and opening browser immediately
+      // Show device dialog
       setDeviceDialog({
         open: true,
         userCode: deviceData.user_code,
         verificationUri: deviceData.verification_uri,
         isPolling: false,
+        isConnected: false,
+        connectedUser: null,
       });
 
       // Start polling in the background
@@ -146,14 +150,6 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setDeviceDialog(prev => ({ ...prev, isPolling: true }));
       
       const tokenResult = await window.electron?.githubPollForToken(deviceData.device_code);
-      
-      // Close dialog and reset state
-      setDeviceDialog({
-        open: false,
-        userCode: '',
-        verificationUri: '',
-        isPolling: false,
-      });
       
       if (!tokenResult?.success) {
         throw new Error(tokenResult?.error || 'Failed to get access token');
@@ -163,6 +159,22 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       storeToken(tokenResult.token);
       await checkTokenValidity();
       
+      // Update dialog to show success state instead of closing
+      setDeviceDialog(prev => ({
+        ...prev,
+        isPolling: false,
+        isConnected: true,
+        connectedUser: state.user, // This will be updated by checkTokenValidity
+      }));
+
+      // Wait a bit for state to update, then use the updated user info
+      setTimeout(() => {
+        setDeviceDialog(prev => ({
+          ...prev,
+          connectedUser: state.user,
+        }));
+      }, 100);
+      
       toast({
         title: "GitHub Connected",
         description: "Successfully connected to GitHub!",
@@ -171,13 +183,13 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       console.error('GitHub connection error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to connect to GitHub';
       
-      // Close dialog on error
-      setDeviceDialog({
-        open: false,
-        userCode: '',
-        verificationUri: '',
+      // Update dialog to show error state but keep it open
+      setDeviceDialog(prev => ({
+        ...prev,
         isPolling: false,
-      });
+        isConnected: false,
+        connectedUser: null,
+      }));
       
       setState(prev => ({
         ...prev,
@@ -236,19 +248,27 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   return (
     <GitHubAuthContext.Provider value={value}>
       {children}
-      {/* Add the device dialog */}
+      {/* Updated device dialog with new props */}
       <GitHubDeviceDialog
         open={deviceDialog.open}
         onOpenChange={(open) => {
-          if (!open && deviceDialog.isPolling) {
-            // Don't allow closing while polling unless there's an error
-            return;
+          if (!open) {
+            // Reset dialog state when manually closed
+            setDeviceDialog({
+              open: false,
+              userCode: '',
+              verificationUri: '',
+              isPolling: false,
+              isConnected: false,
+              connectedUser: null,
+            });
           }
-          setDeviceDialog(prev => ({ ...prev, open }));
         }}
         userCode={deviceDialog.userCode}
         verificationUri={deviceDialog.verificationUri}
         isPolling={deviceDialog.isPolling}
+        isConnected={deviceDialog.isConnected}
+        connectedUser={deviceDialog.connectedUser}
       />
     </GitHubAuthContext.Provider>
   );
