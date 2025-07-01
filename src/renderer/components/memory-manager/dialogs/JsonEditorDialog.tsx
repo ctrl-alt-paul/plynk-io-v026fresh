@@ -35,8 +35,8 @@ export function JsonEditorDialog({
       }
 
       // Validate memoryProfileType if present
-      if (parsed.memoryProfileType && !['default', 'user', 'community'].includes(parsed.memoryProfileType)) {
-        setJsonError("The 'memoryProfileType' field must be either 'default', 'user', or 'community'.");
+      if (parsed.memoryProfileType && !['default', 'user'].includes(parsed.memoryProfileType)) {
+        setJsonError("The 'memoryProfileType' field must be either 'default' or 'user'.");
         return;
       }
 
@@ -64,7 +64,7 @@ export function JsonEditorDialog({
         <DialogHeader>
           <DialogTitle>Edit Memory Profile JSON</DialogTitle>
           <DialogDescription>
-            Edit the full JSON of the memory profile. The <code className="bg-blue-100 px-1 rounded">process</code> field is required and specifies the executable to attach to. The <code className="bg-blue-100 px-1 rounded">memoryProfileType</code> field indicates whether this is a 'default', 'user', or 'community' profile.
+            Edit the full JSON of the memory profile. The <code className="bg-blue-100 px-1 rounded">process</code> field is required and specifies the executable to attach to. The <code className="bg-blue-100 px-1 rounded">memoryProfileType</code> field indicates whether this is a 'default' or 'user' profile.
           </DialogDescription>
         </DialogHeader>
         
