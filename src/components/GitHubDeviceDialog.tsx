@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ExternalLink, Copy, Check, CheckCircle, X } from 'lucide-react';
+import { ExternalLink, Copy, Check, CheckCircle } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -60,27 +60,16 @@ export function GitHubDeviceDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-2">
-              {isConnected ? (
-                <>
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                  GitHub Connected Successfully!
-                </>
-              ) : (
-                'GitHub Authorization Required'
-              )}
-            </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleClose}
-              className="h-6 w-6 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </Button>
-          </div>
+          <DialogTitle className="flex items-center gap-2">
+            {isConnected ? (
+              <>
+                <CheckCircle className="h-5 w-5 text-green-500" />
+                GitHub Connected Successfully!
+              </>
+            ) : (
+              'GitHub Authorization Required'
+            )}
+          </DialogTitle>
           <DialogDescription>
             {isConnected 
               ? 'Your GitHub account has been successfully connected to PLYNK-IO.'
@@ -171,12 +160,6 @@ export function GitHubDeviceDialog({
                   </div>
                 </div>
               )}
-
-              <div className="pt-2 border-t">
-                <Button variant="outline" onClick={handleClose} className="w-full">
-                  Cancel
-                </Button>
-              </div>
             </>
           )}
         </div>
