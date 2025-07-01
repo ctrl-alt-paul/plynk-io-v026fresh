@@ -99,7 +99,7 @@ export function AboutDialog({ trigger, open: controlledOpen, onOpenChange }: Abo
               variant="outline" 
               size="sm" 
               className="justify-start"
-              onClick={() => handleExternalLink('https://github.com/pppaulie/plynk-io')}
+              onClick={() => handleExternalLink('https://github.com/crtl-alt-paul/plynk-io')}
             >
               <Github className="h-4 w-4 mr-2" />
               View on GitHub
