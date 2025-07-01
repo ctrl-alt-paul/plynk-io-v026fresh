@@ -96,8 +96,8 @@ export function MessageJsonEditorDialog({
       }
 
       // Validate messageProfileType if present
-      if (parsed.messageProfileType && !['default', 'user'].includes(parsed.messageProfileType)) {
-        setJsonError("The 'messageProfileType' field must be either 'default' or 'user'.");
+      if (parsed.messageProfileType && !['default', 'user', 'community'].includes(parsed.messageProfileType)) {
+        setJsonError("The 'messageProfileType' field must be either 'default', 'user', or 'community'.");
         return;
       }
 
@@ -136,7 +136,7 @@ export function MessageJsonEditorDialog({
         <DialogHeader>
           <DialogTitle>Edit Message Profile JSON</DialogTitle>
           <DialogDescription>
-            Enter the profile name and edit the JSON structure. The profile name will automatically update the JSON content in real-time. The <code className="bg-blue-100 px-1 rounded">outputs</code> field contains the message outputs array. The <code className="bg-blue-100 px-1 rounded">messageProfileType</code> field indicates whether this is a 'default' or 'user' profile.
+            Enter the profile name and edit the JSON structure. The profile name will automatically update the JSON content in real-time. The <code className="bg-blue-100 px-1 rounded">outputs</code> field contains the message outputs array. The <code className="bg-blue-100 px-1 rounded">messageProfileType</code> field indicates whether this is a 'default', 'user', or 'community' profile.
           </DialogDescription>
         </DialogHeader>
         
