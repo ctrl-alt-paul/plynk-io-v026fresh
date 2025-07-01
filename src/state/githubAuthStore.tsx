@@ -296,12 +296,18 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   return (
     <GitHubAuthContext.Provider value={value}>
       {children}
-      {/* Updated device dialog with cancel functionality */}
+      {/* Updated device dialog with conditional close handling */}
       <GitHubDeviceDialog
         open={deviceDialog.open}
         onOpenChange={(open) => {
           if (!open) {
-            cancelGitHubAuth();
+            // If successfully connected, just close the dialog
+            if (deviceDialog.isConnected) {
+              setDeviceDialog(prev => ({ ...prev, open: false }));
+            } else {
+              // If not connected, cancel the auth process
+              cancelGitHubAuth();
+            }
           }
         }}
         userCode={deviceDialog.userCode}
