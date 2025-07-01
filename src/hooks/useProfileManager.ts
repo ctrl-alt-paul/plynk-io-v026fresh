@@ -75,7 +75,7 @@ export function useProfileManager({
     }
   }, [debugLoggingEnabled]);
 
-  const loadMemoryProfile = useCallback(async (fileName: string, profileType?: 'default' | 'user') => {
+  const loadMemoryProfile = useCallback(async (fileName: string, profileType?: 'default' | 'user' | 'community') => {
     try {
       setIsLoadingProfile(true);
       

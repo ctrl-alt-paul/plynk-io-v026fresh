@@ -51,7 +51,7 @@ const MessageProfileManager: React.FC<MessageProfileManagerProps> = ({
   const [newProfileName, setNewProfileName] = useState("");
   const [profilesWithType, setProfilesWithType] = useState<ProfileWithType[]>([]);
   const [loadingProfiles, setLoadingProfiles] = useState(false);
-  const [currentProfileType, setCurrentProfileType] = useState<'default' | 'user'>('user');
+  const [currentProfileType, setCurrentProfileType] = useState<'default' | 'user' | 'community'>('user');
   const { toast } = useToast();
 
   // Load profiles with type information
@@ -147,6 +147,7 @@ const MessageProfileManager: React.FC<MessageProfileManagerProps> = ({
 
   // Group profiles by type
   const defaultProfiles = profilesWithType.filter(p => p.type === 'default');
+  const communityProfiles = profilesWithType.filter(p => p.type === 'community');
   const userProfiles = profilesWithType.filter(p => p.type === 'user');
 
   return (
@@ -177,6 +178,22 @@ const MessageProfileManager: React.FC<MessageProfileManagerProps> = ({
                         <div className="flex items-center gap-2">
                           <span>{fileName}</span>
                           <span className="px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800">Default</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </>
+                )}
+
+                {communityProfiles.length > 0 && (
+                  <>
+                    <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b">
+                      Community Profiles
+                    </div>
+                    {communityProfiles.map(({ fileName, type }) => (
+                      <SelectItem key={`community-${fileName}`} value={fileName}>
+                        <div className="flex items-center gap-2">
+                          <span>{fileName}</span>
+                          <span className="px-2 py-1 text-xs font-medium rounded bg-orange-100 text-orange-800">Community</span>
                         </div>
                       </SelectItem>
                     ))}

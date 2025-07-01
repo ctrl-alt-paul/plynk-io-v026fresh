@@ -260,7 +260,7 @@ const MemoryManagerContent = () => {
               isLoading={memoryReader.isLoading}
               isSaving={profileManager.isSaving}
               selectedProcess={selectedProcess}
-              onProfileSelect={(profileName, profileType) => {
+              onProfileSelect={(profileName, profileType: 'default' | 'user' | 'community') => {
                 // Clear original addresses when switching profiles
                 addressManager.clearOriginalAddresses();
                 profileManager.loadMemoryProfile(profileName, profileType);
@@ -434,13 +434,14 @@ const MemoryManagerContent = () => {
           
           <MemoryAddressTable
             memoryAddresses={addressManager.memoryAddresses}
-            removeMemoryAddress={addressManager.removeMemoryAddress}
-            updateMemoryAddressField={addressManager.updateMemoryAddressField}
-            addOffset={addressManager.addOffset}
-            removeOffset={addressManager.removeOffset}
-            newOffset={addressManager.newOffset}
-            setNewOffset={addressManager.setNewOffset}
-            moveMemoryAddress={addressManager.moveMemoryAddress}
+            updateMemoryAddress={addressManager.updateMemoryAddressField}
+            deleteMemoryAddress={addressManager.deleteMemoryAddress}
+            selectedAddressIndex={selectedAddressIndex}
+            setSelectedAddressIndex={setSelectedAddressIndex}
+            duplicateMemoryAddress={addressManager.duplicateMemoryAddress}
+            selectedProcess={selectedProcess}
+            currentProfile={profileManager.currentProfile}
+            isReadingMemory={memoryReader.isLoading}
           />
         </div>
       </div>
