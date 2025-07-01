@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { MemoryStick, RefreshCw, HelpCircle, FileEdit } from "lucide-react";
+import { MemoryStick, RefreshCw, HelpCircle, FileEdit, Upload } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useProfileNavigation } from "@/hooks/useProfileNavigation";
 import { Process } from "@/types/memoryAddress";
@@ -11,6 +12,8 @@ import { MemoryProfile } from "@/types/memoryProfiles";
 import { profileStorage } from "@/lib/profileStorage";
 import { UnsavedChangesProvider } from "@/components/UnsavedChangesProvider";
 import { UnsavedChangesWarning } from "@/components/UnsavedChangesWarning";
+import { MemoryProfileSubmissionDialog } from '@/components/MemoryProfileSubmissionDialog';
+import { useGitHubAuth } from '@/state/githubAuthStore';
 
 // Import the refactored components
 import {
@@ -36,10 +39,17 @@ const MemoryManagerContent = () => {
   const [processes, setProcesses] = useState<Process[]>([]);
   const [selectedProcess, setSelectedProcess] = useState<string | null>(null);
   const [selectedAddressIndex, setSelectedAddressIndex] = useState<number | null>(null);
+  
+  // Add submission dialog state
+  const [showSubmissionDialog, setShowSubmissionDialog] = useState(false);
+  
   const {
     focusedMemoryProfile,
     clearFocus
   } = useProfileNavigation();
+  
+  // Add GitHub auth hook
+  const { isConnected } = useGitHubAuth();
   
   // New state for JSON editing modal
   const [showJsonModal, setShowJsonModal] = useState(false);
@@ -228,7 +238,14 @@ const MemoryManagerContent = () => {
     }
   };
 
+  // Add function to get user-created outputs
+  const getUserCreatedOutputs = () => {
+    return addressManager.memoryAddresses.filter(addr => addr.source === 'user');
+  };
+
   const hasValidAddresses = addressManager.memoryAddresses.length > 0;
+  const userOutputs = getUserCreatedOutputs();
+  const hasUserOutputs = userOutputs.length > 0;
 
   return (
     <div className="container mx-auto py-2">
@@ -251,6 +268,24 @@ const MemoryManagerContent = () => {
                 </Button>
               } 
             />
+            
+            {/* Add Submission Button */}
+            {hasUserOutputs && (
+              <Button
+                onClick={() => setShowSubmissionDialog(true)}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Upload className="h-4 w-4" />
+                Submit to Community
+                {!isConnected && (
+                  <Badge variant="secondary" className="text-xs">
+                    GitHub Required
+                  </Badge>
+                )}
+              </Button>
+            )}
+            
             <MemoryProfileManager
               availableProfiles={profileManager.availableProfiles}
               currentProfileName={profileManager.currentProfileName}
@@ -444,6 +479,16 @@ const MemoryManagerContent = () => {
           />
         </div>
       </div>
+      
+      {/* Add Submission Dialog */}
+      {profileManager.currentProfile && (
+        <MemoryProfileSubmissionDialog
+          open={showSubmissionDialog}
+          onOpenChange={setShowSubmissionDialog}
+          profile={profileManager.currentProfile}
+          userOutputs={userOutputs}
+        />
+      )}
       
       {/* JSON Editor Dialog */}
       <JsonEditorDialog

@@ -30,7 +30,7 @@ export interface MemoryProfileOutput {
   /**
    * Track the origin of the memory address output
    */
-  source?: "user" | "profile";
+  source?: "user" | "profile" | "community";
 }
 
 export interface MemoryProfile {
@@ -52,4 +52,15 @@ export interface MemoryProfile {
    * The type of memory profile - 'default' for built-in profiles, 'user' for user-created profiles, 'community' for community profiles
    */
   memoryProfileType?: 'default' | 'user' | 'community';
+  /**
+   * Metadata for community submissions
+   */
+  _meta?: {
+    issue: number;
+    submittedBy: string;
+    submittedAt: string;
+    gameVersion?: string;
+    emulator?: string;
+    globalNotes?: string;
+  };
 }
