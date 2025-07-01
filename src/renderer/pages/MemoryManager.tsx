@@ -434,14 +434,13 @@ const MemoryManagerContent = () => {
           
           <MemoryAddressTable
             memoryAddresses={addressManager.memoryAddresses}
-            updateMemoryAddress={addressManager.updateMemoryAddressField}
-            deleteMemoryAddress={addressManager.deleteMemoryAddress}
-            selectedAddressIndex={selectedAddressIndex}
-            setSelectedAddressIndex={setSelectedAddressIndex}
-            duplicateMemoryAddress={addressManager.duplicateMemoryAddress}
-            selectedProcess={selectedProcess}
-            currentProfile={profileManager.currentProfile}
-            isReadingMemory={memoryReader.isLoading}
+            removeMemoryAddress={addressManager.removeMemoryAddress}
+            updateMemoryAddressField={addressManager.updateMemoryAddressField}
+            addOffset={addressManager.addOffset}
+            removeOffset={addressManager.removeOffset}
+            newOffset={addressManager.newOffset}
+            setNewOffset={addressManager.setNewOffset}
+            moveMemoryAddress={addressManager.moveMemoryAddress}
           />
         </div>
       </div>
