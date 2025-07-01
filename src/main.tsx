@@ -1,14 +1,26 @@
 
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
-import { ErrorBoundary } from './components/ErrorBoundary'
-import { MemoryRouter } from 'react-router-dom'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import App from "./App";
+import "./index.css";
+import { GitHubAuthProvider } from "./state/githubAuthStore";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 createRoot(document.getElementById("root")!).render(
-  <ErrorBoundary>
-    <MemoryRouter>
-      <App />
-    </MemoryRouter>
-  </ErrorBoundary>
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <GitHubAuthProvider>
+        <App />
+      </GitHubAuthProvider>
+    </QueryClientProvider>
+  </StrictMode>
 );

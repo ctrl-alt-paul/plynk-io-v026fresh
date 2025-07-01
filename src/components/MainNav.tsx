@@ -1,5 +1,5 @@
 
-import { MemoryStick, CpuIcon, Gamepad2, Activity, FileText, MessageSquare, Info } from "lucide-react";
+import { MemoryStick, CpuIcon, Gamepad2, Activity, FileText, MessageSquare, Info, Github } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import {
   NavigationMenu,
@@ -8,16 +8,24 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { AboutDialog } from "@/components/AboutDialog";
 import { useState } from "react";
 import { useMessageAttachment } from "@/contexts/MessageAttachmentContext";
+import { useGitHubAuth } from "@/state/githubAuthStore";
 import { cn } from "@/lib/utils";
 
 export function MainNav() {
   const [showAbout, setShowAbout] = useState(false);
   const { isGameProfileActive } = useMessageAttachment();
   const location = useLocation();
+  const { status, connectGitHub, disconnect, viewSubmissions, user, isLoading } = useGitHubAuth();
 
   // Handle external links
   const handleExternalLink = (url: string) => {
@@ -42,6 +50,16 @@ export function MainNav() {
 
   // Dynamic icon path based on game profile state
   const iconPath = isGameProfileActive ? "/icon2.png" : "/icon.png";
+
+  // GitHub icon color based on connection status
+  const getGitHubIconColor = () => {
+    if (isLoading) return "text-blue-400";
+    switch (status) {
+      case 'connected': return "text-green-500";
+      case 'invalid': return "text-red-500";
+      default: return "text-gray-400";
+    }
+  };
 
   const routes = [
     {
@@ -134,6 +152,53 @@ export function MainNav() {
             }}
             onClick={() => handleExternalLink('https://buymeacoffee.com/ctrl_alt_paul')}
           />
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Github 
+                className={cn(
+                  "h-10 w-10 p-2 hover:drop-shadow-lg transition-all duration-200 cursor-pointer hover:scale-110",
+                  getGitHubIconColor()
+                )}
+                style={{
+                  filter: 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.3))'
+                }}
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-800 border shadow-lg">
+              {status === 'disconnected' || status === 'invalid' ? (
+                <DropdownMenuItem 
+                  onClick={connectGitHub}
+                  disabled={isLoading}
+                  className="cursor-pointer"
+                >
+                  <Github className="mr-2 h-4 w-4" />
+                  {isLoading ? 'Connecting...' : 'Connect GitHub'}
+                </DropdownMenuItem>
+              ) : (
+                <>
+                  <DropdownMenuItem 
+                    onClick={viewSubmissions}
+                    className="cursor-pointer"
+                  >
+                    <Github className="mr-2 h-4 w-4" />
+                    View My Repositories
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={disconnect}
+                    className="cursor-pointer text-red-600 dark:text-red-400"
+                  >
+                    Disconnect GitHub
+                  </DropdownMenuItem>
+                  {user && (
+                    <div className="px-2 py-1 text-xs text-gray-500 border-t">
+                      Connected as {user.login}
+                    </div>
+                  )}
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <Button
             onClick={() => setShowAbout(true)}
