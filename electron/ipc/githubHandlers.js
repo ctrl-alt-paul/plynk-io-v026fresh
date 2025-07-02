@@ -1,4 +1,3 @@
-
 const { GitHubAuthService } = require('../services/githubAuthService');
 const { logToDevTools } = require('../logger');
 const fetch = require('node-fetch');
@@ -53,15 +52,12 @@ const registerGitHubHandlers = (ipcMain) => {
   });
 
   // Create GitHub issue
-  ipcMain.handle('github:create-issue', async (_, owner, repo, issueData) => {
+  ipcMain.handle('github:create-issue', async (_, owner, repo, issueData, token) => {
     try {
       logToDevTools(`Creating GitHub issue in ${owner}/${repo}`);
       
-      // Get token from global scope (set by the renderer process)
-      const token = global.githubToken;
-      
       if (!token) {
-        throw new Error('No GitHub token available');
+        throw new Error('No GitHub token provided');
       }
       
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {

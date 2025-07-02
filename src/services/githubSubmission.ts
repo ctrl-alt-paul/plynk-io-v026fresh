@@ -1,4 +1,3 @@
-
 import { format } from 'date-fns';
 import { MemoryProfile, MemoryProfileOutput } from '@/types/memoryProfiles';
 import { GitHubUser } from '@/state/githubAuthStore';
@@ -210,10 +209,8 @@ ${profileJson}
         throw new Error('No GitHub token found. Please reconnect to GitHub.');
       }
 
-      // Set the token globally for the Electron handler to use
-      global.githubToken = token;
-
-      const result = await window.electron.githubCreateIssue(GITHUB_OWNER, GITHUB_REPO, issueData);
+      // Pass the token directly to the IPC call instead of using global
+      const result = await window.electron.githubCreateIssue(GITHUB_OWNER, GITHUB_REPO, issueData, token);
 
       if (result.success && result.issueUrl) {
         return {
