@@ -126,6 +126,7 @@ export class GitHubSubmissionService {
     const profileJson = JSON.stringify({
       process: submissionData.profile.process,
       pollInterval: submissionData.profile.pollInterval,
+      memoryProfileType: "community",
       outputs: selectedOutputs.map(output => ({
         label: output.label,
         type: output.type,
@@ -140,7 +141,8 @@ export class GitHubSubmissionService {
         offsets: output.offsets,
         bitmask: output.bitmask,
         bitwiseOp: output.bitwiseOp,
-        bitfield: output.bitfield
+        bitfield: output.bitfield,
+        source: "community"
       }))
     }, null, 2);
 
