@@ -119,25 +119,30 @@ export class GitHubAuthService {
     console.log('getUserRepositories not implemented via IPC yet');
     return [];
   }
+
+  // Initialize event listeners when the service loads
+  static initialize(): void {
+    if (typeof window !== 'undefined' && window.electron?.onGitHubAuthEvent) {
+      // Set up event listeners through the preload exposed API
+      window.electron.onGitHubAuthEvent('github-auth-success', (data) => {
+        console.log('GitHub auth success event received');
+        this.emit('github-auth-success', data);
+      });
+      
+      window.electron.onGitHubAuthEvent('github-auth-error', (data) => {
+        console.log('GitHub auth error event received');
+        this.emit('github-auth-error', data);
+      });
+      
+      window.electron.onGitHubAuthEvent('github-auth-timeout', (data) => {
+        console.log('GitHub auth timeout event received');
+        this.emit('github-auth-timeout', data);
+      });
+    }
+  }
 }
 
-// Initialize event listeners for IPC events
-if (typeof window !== 'undefined' && window.electron) {
-  // Set up IPC event listeners
-  const { ipcRenderer } = window.require('electron');
-  
-  ipcRenderer.on('github-auth-success', (_, data) => {
-    console.log('GitHub auth success event received');
-    GitHubAuthService.emit('github-auth-success', data);
-  });
-  
-  ipcRenderer.on('github-auth-error', (_, data) => {
-    console.log('GitHub auth error event received');
-    GitHubAuthService.emit('github-auth-error', data);
-  });
-  
-  ipcRenderer.on('github-auth-timeout', (_, data) => {
-    console.log('GitHub auth timeout event received');
-    GitHubAuthService.emit('github-auth-timeout', data);
-  });
+// Initialize the service when the module loads
+if (typeof window !== 'undefined') {
+  GitHubAuthService.initialize();
 }

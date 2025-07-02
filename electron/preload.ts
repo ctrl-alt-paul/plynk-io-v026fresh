@@ -94,6 +94,9 @@ interface ElectronAPI {
   githubValidateToken: (token: string) => Promise<{ success: boolean; user?: any; error?: string }>;
   githubCreateIssue: (owner: string, repo: string, issueData: { title: string; body: string; labels: string[] }, token: string) => Promise<{ success: boolean; issueUrl?: string; issueNumber?: number; error?: string }>;
   
+  // New GitHub event listener
+  onGitHubAuthEvent: (event: string, callback: (data: any) => void) => void;
+  
   // External link handling
   openExternal: (url: string) => Promise<{ success: boolean; error?: string }>;
   
@@ -170,6 +173,11 @@ contextBridge.exposeInMainWorld('electron', {
   githubValidateToken: (token: string) => ipcRenderer.invoke('github:validate-token', token),
   githubCreateIssue: (owner: string, repo: string, issueData: { title: string; body: string; labels: string[] }, token: string) => 
     ipcRenderer.invoke('github:create-issue', owner, repo, issueData, token),
+  
+  // New GitHub event listener method
+  onGitHubAuthEvent: (event: string, callback: (data: any) => void) => {
+    ipcRenderer.on(event, (_, data) => callback(data));
+  },
   
   // External link handling
   openExternal: (url: string) => ipcRenderer.invoke('openExternal', url),
