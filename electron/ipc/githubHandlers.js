@@ -1,11 +1,9 @@
 
 const { GitHubAuthService } = require('../services/githubAuthService');
 const { logToDevTools } = require('../logger');
-const { getMainWindow } = require('../state/globals');
 const fetch = require('node-fetch');
 
 let handlersRegistered = false;
-let currentPolling = null; // Track current polling operation
 
 // GitHub OAuth IPC handlers
 const registerGitHubHandlers = (ipcMain) => {
@@ -28,71 +26,25 @@ const registerGitHubHandlers = (ipcMain) => {
     }
   });
 
-  // Start background polling (non-blocking)
-  ipcMain.handle('github:start-background-polling', async (_, deviceCode) => {
-    try {
-      logToDevTools(`Starting background polling for device code: ${deviceCode}`);
-      
-      // Stop any existing polling
-      if (currentPolling) {
-        currentPolling.stop = true;
-      }
-      
-      // Create new polling operation
-      currentPolling = { deviceCode, stop: false };
-      
-      // Start polling in background (don't await)
-      backgroundPoll(deviceCode, currentPolling);
-      
-      return { success: true };
-    } catch (error) {
-      logToDevTools(`Error starting background polling: ${error.message}`);
-      return { success: false, error: error.message };
-    }
-  });
-
-  // Stop polling
-  ipcMain.handle('github:stop-polling', async () => {
-    try {
-      logToDevTools('Stopping GitHub polling');
-      if (currentPolling) {
-        currentPolling.stop = true;
-        currentPolling = null;
-      }
-      return { success: true };
-    } catch (error) {
-      logToDevTools(`Error stopping polling: ${error.message}`);
-      return { success: false, error: error.message };
-    }
-  });
-
-  // Poll for GitHub access token (single check)
+  // Poll for GitHub access token
   ipcMain.handle('github:poll-for-token', async (_, deviceCode) => {
     try {
-      logToDevTools(`Single token check for device code: ${deviceCode}`);
-      const response = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          client_id: GitHubAuthService.CLIENT_ID,
-          device_code: deviceCode,
-          grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
-        }),
-      });
-
-      const data = await response.json();
-      
-      if (data.access_token) {
-        return { success: true, token: data.access_token };
-      } else {
-        return { success: false, error: data.error_description || data.error || 'No token received' };
-      }
+      logToDevTools(`Polling for GitHub token with device code: ${deviceCode}`);
+      const token = await GitHubAuthService.pollForToken(deviceCode);
+      logToDevTools('GitHub token received successfully');
+      return { success: true, token };
     } catch (error) {
-      logToDevTools(`Error in single token check: ${error.message}`);
-      return { success: false, error: error.message };
+      logToDevTools(`Error polling for GitHub token: ${error.message}`);
+      
+      // Provide more user-friendly error messages
+      let userFriendlyError = error.message;
+      if (error.message.includes('Too many requests')) {
+        userFriendlyError = 'GitHub rate limit reached. Please wait 5-10 minutes before trying to connect again.';
+      } else if (error.message.includes('slow_down')) {
+        userFriendlyError = 'Polling too frequently. Please wait a moment and try again.';
+      }
+      
+      return { success: false, error: userFriendlyError };
     }
   });
 
@@ -169,98 +121,5 @@ const registerGitHubHandlers = (ipcMain) => {
   handlersRegistered = true;
   logToDevTools('GitHub handlers registered successfully');
 };
-
-// Background polling function
-async function backgroundPoll(deviceCode, pollingOperation) {
-  logToDevTools('Starting background GitHub polling');
-  let pollCount = 0;
-  const maxPolls = 180; // 15 minutes max
-  const mainWindow = getMainWindow();
-  
-  const poll = async () => {
-    try {
-      // Check if polling was stopped
-      if (pollingOperation.stop) {
-        logToDevTools('Background polling stopped');
-        return;
-      }
-      
-      pollCount++;
-      logToDevTools(`Background polling attempt ${pollCount}/${maxPolls}`);
-      
-      if (pollCount > maxPolls) {
-        logToDevTools('Background polling timeout');
-        if (mainWindow) {
-          mainWindow.webContents.send('github-auth-timeout', {});
-        }
-        return;
-      }
-
-      const response = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          client_id: GitHubAuthService.CLIENT_ID,
-          device_code: deviceCode,
-          grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.access_token) {
-        logToDevTools('Background polling successful - token received');
-        
-        // Validate token and get user info
-        try {
-          const user = await GitHubAuthService.validateToken(data.access_token);
-          if (mainWindow) {
-            mainWindow.webContents.send('github-auth-success', {
-              token: data.access_token,
-              user: user
-            });
-          }
-        } catch (validationError) {
-          logToDevTools(`Token validation failed: ${validationError.message}`);
-          if (mainWindow) {
-            mainWindow.webContents.send('github-auth-error', {
-              error: 'Token validation failed'
-            });
-          }
-        }
-        return;
-      } else if (data.error && data.error !== 'authorization_pending') {
-        logToDevTools(`Background polling error: ${data.error}`);
-        if (mainWindow) {
-          mainWindow.webContents.send('github-auth-error', {
-            error: data.error_description || data.error
-          });
-        }
-        return;
-      }
-      
-      // Continue polling after delay
-      setTimeout(() => {
-        if (!pollingOperation.stop) {
-          poll();
-        }
-      }, 5000); // 5 second intervals
-      
-    } catch (error) {
-      logToDevTools(`Background polling error: ${error.message}`);
-      if (mainWindow) {
-        mainWindow.webContents.send('github-auth-error', {
-          error: error.message
-        });
-      }
-    }
-  };
-
-  // Start polling
-  poll();
-}
 
 module.exports = { registerGitHubHandlers };
