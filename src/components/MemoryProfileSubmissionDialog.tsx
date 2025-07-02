@@ -311,33 +311,33 @@ export function MemoryProfileSubmissionDialog({
                   const isSelected = selectedOutputs.includes(output.label);
                   
                   return (
-                    <div key={output.label} className={`px-4 py-3 grid grid-cols-12 gap-2 border-t text-sm ${hasError && isSelected ? 'bg-red-50' : ''}`}>
+                    <div key={output.label} className={`px-4 py-3 grid grid-cols-12 gap-2 border-t text-sm items-center ${hasError && isSelected ? 'bg-red-50' : ''}`}>
                       <div className="col-span-1 flex items-center">
                         <Checkbox
                           checked={isSelected}
                           onCheckedChange={(checked) => handleOutputToggle(output.label, checked as boolean)}
                         />
                       </div>
-                      <div className="col-span-2 font-medium">
+                      <div className="col-span-2 font-medium flex items-center">
                         {output.label}
                         {hasError && isSelected && (
                           <AlertCircle className="h-4 w-4 text-red-500 inline ml-1" />
                         )}
                       </div>
-                      <div className="col-span-3 font-mono text-xs">
+                      <div className="col-span-3 font-mono text-xs flex items-center">
                         {GitHubSubmissionService.getAddressValue(output)}
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-2 flex items-center">
                         <Badge variant="secondary" className="text-xs">
                           {GitHubSubmissionService.getAddressTypeLabel(output)}
                         </Badge>
                       </div>
-                      <div className="col-span-4">
+                      <div className="col-span-4 flex items-center">
                         <Input
                           value={outputNotes[output.label] || ''}
                           onChange={(e) => handleNotesChange(output.label, e.target.value)}
                           placeholder="Add notes..."
-                          className="text-xs h-8"
+                          className="text-xs h-8 w-full"
                         />
                       </div>
                     </div>
