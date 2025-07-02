@@ -117,6 +117,26 @@ const registerGitHubHandlers = (ipcMain) => {
       if (!token) {
         throw new Error('No GitHub token provided');
       }
+
+      // Log token scope for debugging
+      try {
+        const tokenInfoResponse = await fetch('https://api.github.com/user', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+          },
+        });
+        
+        if (tokenInfoResponse.ok) {
+          const scopes = tokenInfoResponse.headers.get('x-oauth-scopes') || 'No scopes header';
+          logToDevTools(`GitHub Token Scopes: ${scopes}`);
+        }
+      } catch (scopeError) {
+        logToDevTools(`Could not retrieve token scopes: ${scopeError.message}`);
+      }
+
+      // Log the labels being sent
+      logToDevTools(`Labels being sent to GitHub: ${JSON.stringify(issueData.labels)}`);
       
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
         method: 'POST',
