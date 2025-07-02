@@ -193,15 +193,11 @@ ${profileJson}
       }
 
       const submissionDate = new Date();
-      const labels = this.getGitHubLabels(submissionData.emulator);
-      
-      // Log the labels being generated
-      console.log('GitHub labels being sent:', labels);
       
       const issueData: GitHubIssueData = {
         title: this.createIssueTitle(submissionData.gameName, user.login, submissionDate),
         body: this.createIssueBody(submissionData, user, submissionDate),
-        labels: labels
+        labels: this.getGitHubLabels(submissionData.emulator)
       };
 
       // Call Electron IPC to create GitHub issue
