@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Upload, Github, CheckCircle, AlertCircle } from 'lucide-react';
 import {
@@ -54,7 +55,7 @@ export function MemoryProfileSubmissionDialog({
   pollInterval,
   userOutputs
 }: MemoryProfileSubmissionDialogProps) {
-  const { user, isConnected } = useGitHubAuth();
+  const { user, isAuthenticated } = useGitHubAuth();
   const [selectedOutputs, setSelectedOutputs] = useState<string[]>([]);
   const [gameName, setGameName] = useState('');
   const [gameVersion, setGameVersion] = useState('');
@@ -124,7 +125,7 @@ export function MemoryProfileSubmissionDialog({
   };
 
   const handleSubmit = async () => {
-    if (!isConnected || !user) {
+    if (!isAuthenticated || !user) {
       toast.error('Please connect to GitHub first');
       return;
     }
@@ -174,7 +175,7 @@ export function MemoryProfileSubmissionDialog({
     }
   };
 
-  if (!isConnected) {
+  if (!isAuthenticated) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-md">
