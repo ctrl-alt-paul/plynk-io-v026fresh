@@ -114,6 +114,7 @@ contextBridge.exposeInMainWorld('electron', {
   githubStartDeviceFlow: () => ipcRenderer.invoke('github:start-device-flow'),
   githubPollForToken: (deviceCode) => ipcRenderer.invoke('github:poll-for-token', deviceCode),
   githubValidateToken: (token) => ipcRenderer.invoke('github:validate-token', token),
+  githubCreateIssue: (owner, repo, issueData, token) => ipcRenderer.invoke('github:create-issue', owner, repo, issueData, token),
   
   // Methods to interact with device store
   getDevices: () => ipcRenderer.invoke('device-store:get-devices'),
