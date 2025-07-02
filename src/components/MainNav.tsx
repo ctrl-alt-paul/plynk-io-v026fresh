@@ -19,13 +19,24 @@ import { AboutDialog } from "@/components/AboutDialog";
 import { useState } from "react";
 import { useMessageAttachment } from "@/contexts/MessageAttachmentContext";
 import { useGitHubAuth } from "@/state/githubAuthStore";
+import { GitHubDeviceDialog } from "@/components/GitHubDeviceDialog";
 import { cn } from "@/lib/utils";
 
 export function MainNav() {
   const [showAbout, setShowAbout] = useState(false);
+  const [showGitHubDialog, setShowGitHubDialog] = useState(false);
   const { isGameProfileActive } = useMessageAttachment();
   const location = useLocation();
-  const { status, connectGitHub, disconnect, viewSubmissions, user, isLoading } = useGitHubAuth();
+  const { 
+    isAuthenticated, 
+    user, 
+    isConnecting, 
+    deviceFlow, 
+    error,
+    startAuthentication, 
+    cancelAuthentication,
+    logout 
+  } = useGitHubAuth();
 
   // Handle external links
   const handleExternalLink = (url: string) => {
@@ -53,11 +64,20 @@ export function MainNav() {
 
   // GitHub icon color based on connection status
   const getGitHubIconColor = () => {
-    if (isLoading) return "text-blue-400";
-    switch (status) {
-      case 'connected': return "text-green-500";
-      case 'invalid': return "text-red-500";
-      default: return "text-gray-400";
+    if (isConnecting) return "text-blue-400";
+    if (isAuthenticated) return "text-green-500";
+    if (error) return "text-red-500";
+    return "text-gray-400";
+  };
+
+  const handleConnectGitHub = async () => {
+    setShowGitHubDialog(true);
+    await startAuthentication();
+  };
+
+  const handleViewRepositories = () => {
+    if (user) {
+      handleExternalLink(`https://github.com/${user.login}?tab=repositories`);
     }
   };
 
@@ -166,26 +186,26 @@ export function MainNav() {
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-800 border shadow-lg">
-              {status === 'disconnected' || status === 'invalid' ? (
+              {!isAuthenticated ? (
                 <DropdownMenuItem 
-                  onClick={connectGitHub}
-                  disabled={isLoading}
+                  onClick={handleConnectGitHub}
+                  disabled={isConnecting}
                   className="cursor-pointer"
                 >
                   <Github className="mr-2 h-4 w-4" />
-                  {isLoading ? 'Connecting...' : 'Connect GitHub'}
+                  {isConnecting ? 'Connecting...' : 'Connect GitHub'}
                 </DropdownMenuItem>
               ) : (
                 <>
                   <DropdownMenuItem 
-                    onClick={viewSubmissions}
+                    onClick={handleViewRepositories}
                     className="cursor-pointer"
                   >
                     <Github className="mr-2 h-4 w-4" />
                     View My Repositories
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={disconnect}
+                    onClick={logout}
                     className="cursor-pointer text-red-600 dark:text-red-400"
                   >
                     Disconnect GitHub
@@ -217,6 +237,20 @@ export function MainNav() {
         trigger={<div />}
         open={showAbout}
         onOpenChange={setShowAbout}
+      />
+
+      <GitHubDeviceDialog
+        open={showGitHubDialog}
+        onOpenChange={setShowGitHubDialog}
+        userCode={deviceFlow?.user_code || ''}
+        verificationUri={deviceFlow?.verification_uri || 'https://github.com/login/device'}
+        isPolling={isConnecting}
+        isConnected={isAuthenticated}
+        connectedUser={user}
+        onCancel={() => {
+          cancelAuthentication();
+          setShowGitHubDialog(false);
+        }}
       />
     </div>
   );
