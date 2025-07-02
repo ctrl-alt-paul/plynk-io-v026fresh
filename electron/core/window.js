@@ -108,7 +108,7 @@ function createWindow() {
   
   logEvent('debug', `Loading application from: ${startUrl}`);
   
-  // Set Content Security Policy
+  // Set Content Security Policy - UPDATED to include GitHub domains
   mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
@@ -119,7 +119,7 @@ function createWindow() {
           "style-src 'self' 'unsafe-inline'; " +
           "font-src 'self'; " +
           "img-src 'self' data:; " +
-          "connect-src 'self' ws: wss:; " +
+          "connect-src 'self' ws: wss: https://github.com https://api.github.com; " +
           "media-src 'self';"
         ]
       }
