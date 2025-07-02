@@ -15,7 +15,7 @@ export interface GitHubTokenResponse {
 
 export class GitHubAuthService {
   private static readonly CLIENT_ID = 'Ov23liJfTs91MQkp5rQ2'; // PLYNK-IO GitHub OAuth App
-  private static readonly SCOPE = 'read:user';
+  private static readonly SCOPE = 'read:user public_repo';
 
   static async initiateDeviceFlow(): Promise<GitHubDeviceFlow> {
     const response = await fetch('https://github.com/login/device/code', {
