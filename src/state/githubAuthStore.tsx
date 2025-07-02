@@ -17,6 +17,7 @@ interface GitHubAuthState {
   isConnecting: boolean;
   deviceFlow: GitHubDeviceFlow | null;
   error: string | null;
+  timeRemaining: number; // seconds remaining for auth
 }
 
 interface GitHubAuthContextType extends GitHubAuthState {
@@ -52,6 +53,7 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     isConnecting: false,
     deviceFlow: null,
     error: null,
+    timeRemaining: 0,
   });
 
   // Load stored token on mount
@@ -82,9 +84,94 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     loadStoredAuth();
   }, []);
 
+  // Set up event listeners
+  useEffect(() => {
+    const handleAuthSuccess = async (data: { token: string; user: any }) => {
+      console.log('GitHub authentication successful');
+      
+      // Store token and update state
+      const encrypted = encryptToken(data.token);
+      localStorage.setItem(STORAGE_KEY, encrypted);
+
+      setState(prev => ({
+        ...prev,
+        isAuthenticated: true,
+        user: data.user,
+        token: data.token,
+        isConnecting: false,
+        deviceFlow: null,
+        error: null,
+        timeRemaining: 0,
+      }));
+    };
+
+    const handleAuthError = (data: { error: string }) => {
+      console.error('GitHub authentication error:', data.error);
+      setState(prev => ({
+        ...prev,
+        isConnecting: false,
+        error: data.error,
+        timeRemaining: 0,
+      }));
+    };
+
+    const handleAuthTimeout = () => {
+      console.log('GitHub authentication timeout');
+      setState(prev => ({
+        ...prev,
+        isConnecting: false,
+        error: 'Authentication timeout - please try again',
+        timeRemaining: 0,
+      }));
+    };
+
+    const handleAuthCancelled = () => {
+      console.log('GitHub authentication cancelled');
+      setState(prev => ({
+        ...prev,
+        isConnecting: false,
+        deviceFlow: null,
+        error: null,
+        timeRemaining: 0,
+      }));
+    };
+
+    GitHubAuthService.addEventListener('github-auth-success', handleAuthSuccess);
+    GitHubAuthService.addEventListener('github-auth-error', handleAuthError);
+    GitHubAuthService.addEventListener('github-auth-timeout', handleAuthTimeout);
+    GitHubAuthService.addEventListener('github-auth-cancelled', handleAuthCancelled);
+
+    return () => {
+      GitHubAuthService.removeEventListener('github-auth-success', handleAuthSuccess);
+      GitHubAuthService.removeEventListener('github-auth-error', handleAuthError);
+      GitHubAuthService.removeEventListener('github-auth-timeout', handleAuthTimeout);
+      GitHubAuthService.removeEventListener('github-auth-cancelled', handleAuthCancelled);
+    };
+  }, []);
+
+  // Countdown timer
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (state.isConnecting && state.timeRemaining > 0) {
+      interval = setInterval(() => {
+        setState(prev => ({
+          ...prev,
+          timeRemaining: Math.max(0, prev.timeRemaining - 1)
+        }));
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [state.isConnecting, state.timeRemaining]);
+
   const startAuthentication = useCallback(async () => {
     try {
-      setState(prev => ({ ...prev, isConnecting: true, error: null }));
+      setState(prev => ({ ...prev, isConnecting: true, error: null, timeRemaining: 15 * 60 }));
       console.log('Starting GitHub authentication flow...');
 
       // Step 1: Initiate device flow
@@ -92,43 +179,17 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setState(prev => ({ ...prev, deviceFlow }));
       console.log('GitHub device flow initiated, user code:', deviceFlow.user_code);
 
-      // Step 2: Start polling for token
-      try {
-        const token = await GitHubAuthService.pollForToken(deviceFlow.device_code);
-        console.log('GitHub token received, validating...');
+      // Step 2: Start background polling (non-blocking)
+      await GitHubAuthService.startBackgroundPolling(deviceFlow.device_code);
+      console.log('Background polling started');
 
-        // Step 3: Validate token and get user info
-        const user = await GitHubAuthService.validateToken(token);
-        
-        // Step 4: Store token and update state
-        const encrypted = encryptToken(token);
-        localStorage.setItem(STORAGE_KEY, encrypted);
-
-        setState(prev => ({
-          ...prev,
-          isAuthenticated: true,
-          user,
-          token,
-          isConnecting: false,
-          deviceFlow: null,
-          error: null,
-        }));
-
-        console.log('GitHub authentication completed successfully for user:', user.login);
-      } catch (pollingError) {
-        console.error('GitHub polling failed:', pollingError);
-        setState(prev => ({
-          ...prev,
-          isConnecting: false,
-          error: pollingError instanceof Error ? pollingError.message : 'Authentication failed',
-        }));
-      }
     } catch (error) {
       console.error('GitHub authentication failed:', error);
       setState(prev => ({
         ...prev,
         isConnecting: false,
         error: error instanceof Error ? error.message : 'Failed to start authentication',
+        timeRemaining: 0,
       }));
     }
   }, []);
@@ -141,6 +202,7 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       isConnecting: false,
       deviceFlow: null,
       error: null,
+      timeRemaining: 0,
     }));
   }, []);
 
@@ -155,6 +217,7 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       isConnecting: false,
       deviceFlow: null,
       error: null,
+      timeRemaining: 0,
     });
   }, []);
 

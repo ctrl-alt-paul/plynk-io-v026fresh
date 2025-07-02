@@ -153,7 +153,6 @@ interface MessageAPI {
 }
 
 contextBridge.exposeInMainWorld('electron', {
-  // ... keep existing code (all the existing electron API methods)
   getPacDriveStatus: () => ipcRenderer.invoke('getPacDriveStatus'),
   scanPacDriveDevices: () => ipcRenderer.invoke('scanPacDriveDevices'),
   testPacDriveDevice: (deviceId: number) => ipcRenderer.invoke('testPacDriveDevice', deviceId),
