@@ -203,7 +203,7 @@ export function MemoryProfileSubmissionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
@@ -302,10 +302,10 @@ export function MemoryProfileSubmissionDialog({
               <div className="border rounded-lg overflow-hidden">
                 <div className="bg-muted/50 px-4 py-2 grid grid-cols-12 gap-2 font-medium text-sm">
                   <div className="col-span-1">Select</div>
-                  <div className="col-span-3">Label</div>
+                  <div className="col-span-2">Label</div>
                   <div className="col-span-3">Address</div>
                   <div className="col-span-2">Type</div>
-                  <div className="col-span-3">Notes</div>
+                  <div className="col-span-4">Notes</div>
                 </div>
                 {userOutputs.map((output) => {
                   const hasError = validationErrors.some(err => err.outputId === output.label);
@@ -319,7 +319,7 @@ export function MemoryProfileSubmissionDialog({
                           onCheckedChange={(checked) => handleOutputToggle(output.label, checked as boolean)}
                         />
                       </div>
-                      <div className="col-span-3 font-medium">
+                      <div className="col-span-2 font-medium">
                         {output.label}
                         {hasError && isSelected && (
                           <AlertCircle className="h-4 w-4 text-red-500 inline ml-1" />
@@ -333,12 +333,13 @@ export function MemoryProfileSubmissionDialog({
                           {GitHubSubmissionService.getAddressTypeLabel(output)}
                         </Badge>
                       </div>
-                      <div className="col-span-3">
-                        <Input
+                      <div className="col-span-4">
+                        <Textarea
                           value={outputNotes[output.label] || ''}
                           onChange={(e) => handleNotesChange(output.label, e.target.value)}
                           placeholder="Add notes..."
-                          className="text-xs h-8"
+                          className="text-xs min-h-8 resize-none"
+                          rows={2}
                         />
                       </div>
                     </div>
