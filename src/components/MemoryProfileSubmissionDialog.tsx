@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Upload, Github, CheckCircle, AlertCircle } from 'lucide-react';
 import {
@@ -334,12 +333,11 @@ export function MemoryProfileSubmissionDialog({
                         </Badge>
                       </div>
                       <div className="col-span-4">
-                        <Textarea
+                        <Input
                           value={outputNotes[output.label] || ''}
                           onChange={(e) => handleNotesChange(output.label, e.target.value)}
                           placeholder="Add notes..."
-                          className="text-xs min-h-8 resize-none"
-                          rows={2}
+                          className="text-xs h-8"
                         />
                       </div>
                     </div>
