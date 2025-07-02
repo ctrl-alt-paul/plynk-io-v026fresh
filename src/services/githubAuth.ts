@@ -19,11 +19,11 @@ export class GitHubAuthService {
   static async initiateDeviceFlow(): Promise<GitHubDeviceFlow> {
     console.log('Initiating GitHub device flow via IPC...');
     
-    if (!window.electron?.invoke) {
+    if (!window.electron?.githubStartDeviceFlow) {
       throw new Error('Electron IPC not available');
     }
 
-    const result = await window.electron.invoke('github:start-device-flow');
+    const result = await window.electron.githubStartDeviceFlow();
     
     if (!result.success) {
       console.error('GitHub device flow error:', result.error);
@@ -62,13 +62,13 @@ export class GitHubAuthService {
             return;
           }
 
-          if (!window.electron?.invoke) {
+          if (!window.electron?.githubPollForToken) {
             this.stopPolling();
             reject(new Error('Electron IPC not available'));
             return;
           }
 
-          const result = await window.electron.invoke('github:poll-for-token', deviceCode);
+          const result = await window.electron.githubPollForToken(deviceCode);
           console.log('GitHub polling response via IPC:', { success: result.success, hasToken: !!result.token });
 
           if (result.success && result.token) {
@@ -117,11 +117,11 @@ export class GitHubAuthService {
   static async validateToken(token: string): Promise<any> {
     console.log('Validating GitHub token via IPC...');
     
-    if (!window.electron?.invoke) {
+    if (!window.electron?.githubValidateToken) {
       throw new Error('Electron IPC not available');
     }
 
-    const result = await window.electron.invoke('github:validate-token', token);
+    const result = await window.electron.githubValidateToken(token);
     
     if (!result.success) {
       console.error('Token validation error via IPC:', result.error);
@@ -134,7 +134,7 @@ export class GitHubAuthService {
   }
 
   static async getUserRepositories(token: string): Promise<any[]> {
-    if (!window.electron?.invoke) {
+    if (!window.electron?.githubCreateIssue) {
       throw new Error('Electron IPC not available');
     }
 

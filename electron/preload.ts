@@ -1,4 +1,3 @@
-
 import { contextBridge, ipcRenderer } from 'electron';
 const path = require('path');
 
@@ -88,6 +87,16 @@ interface ElectronAPI {
     userInfo: string;
     hostname: string;
   }>;
+  
+  // GitHub OAuth methods
+  githubStartDeviceFlow: () => Promise<{ success: boolean; data?: any; error?: string }>;
+  githubPollForToken: (deviceCode: string) => Promise<{ success: boolean; token?: string; error?: string }>;
+  githubValidateToken: (token: string) => Promise<{ success: boolean; user?: any; error?: string }>;
+  githubCreateIssue: (owner: string, repo: string, issueData: { title: string; body: string; labels: string[] }, token: string) => Promise<{ success: boolean; issueUrl?: string; issueNumber?: number; error?: string }>;
+  
+  // External link handling
+  openExternal: (url: string) => Promise<{ success: boolean; error?: string }>;
+  
   // Device store persistence methods
   readDeviceStore: () => Promise<any[]>;
   writeDeviceStore: (devices: any[]) => Promise<void>;
@@ -136,6 +145,7 @@ interface ElectronAPI {
   // Message output handling methods
   sendMessageOutput: (key: string, value: any) => void;
   setActiveMessageProfiles: (gameProfile: any, messageProfile: any) => Promise<{ success: boolean; error?: string }>;
+  invoke: (channel: string, ...args: any[]) => Promise<any>;
 }
 
 interface MessageAPI {
@@ -154,6 +164,17 @@ contextBridge.exposeInMainWorld('electron', {
   mapHidDeviceToPacDrive: (hidPath: string, pacDriveIndex: number) => ipcRenderer.invoke('mapHidDeviceToPacDrive', hidPath, pacDriveIndex),
   platform: process.platform,
   getSystemInfo: () => ipcRenderer.invoke('getSystemInfo'),
+  
+  // GitHub OAuth methods
+  githubStartDeviceFlow: () => ipcRenderer.invoke('github:start-device-flow'),
+  githubPollForToken: (deviceCode: string) => ipcRenderer.invoke('github:poll-for-token', deviceCode),
+  githubValidateToken: (token: string) => ipcRenderer.invoke('github:validate-token', token),
+  githubCreateIssue: (owner: string, repo: string, issueData: { title: string; body: string; labels: string[] }, token: string) => 
+    ipcRenderer.invoke('github:create-issue', owner, repo, issueData, token),
+  
+  // External link handling
+  openExternal: (url: string) => ipcRenderer.invoke('openExternal', url),
+  
   // Device store persistence methods
   readDeviceStore: () => ipcRenderer.invoke('readDeviceStore'),
   writeDeviceStore: (devices: any[]) => ipcRenderer.invoke('writeDeviceStore', devices),
@@ -456,7 +477,10 @@ contextBridge.exposeInMainWorld('electron', {
       .catch(err => {
         return { success: false, error: String(err) };
       });
-  }
+  },
+
+  // Generic invoke method for compatibility
+  invoke: (channel: string, ...args: any[]) => ipcRenderer.invoke(channel, ...args)
 });
 
 // Expose Win32 message API separately
