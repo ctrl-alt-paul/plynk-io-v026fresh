@@ -114,8 +114,7 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setState(prev => ({ ...prev, isCheckingStatus: true, error: null }));
       console.log('Checking GitHub authorization status...');
 
-      // Use the polling mechanism to get the token
-      const token = await GitHubAuthService.pollForToken(state.deviceFlow.device_code);
+      const token = await GitHubAuthService.checkAuthStatus(state.deviceFlow.device_code);
       
       if (token) {
         // Authorization successful
@@ -137,6 +136,14 @@ export const GitHubAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         }));
 
         console.log('GitHub authentication completed successfully for user:', user.login);
+      } else {
+        // Still pending
+        setState(prev => ({
+          ...prev,
+          isCheckingStatus: false,
+          error: null,
+        }));
+        console.log('GitHub authorization still pending');
       }
     } catch (error) {
       console.error('GitHub status check failed:', error);
