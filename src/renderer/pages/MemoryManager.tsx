@@ -48,8 +48,8 @@ const MemoryManagerContent = () => {
     clearFocus
   } = useProfileNavigation();
   
-  // Add GitHub auth hook
-  const { isConnected } = useGitHubAuth();
+  // Add GitHub auth hook - FIXED: Using isAuthenticated instead of isConnected
+  const { isAuthenticated } = useGitHubAuth();
   
   // New state for JSON editing modal
   const [showJsonModal, setShowJsonModal] = useState(false);
@@ -269,7 +269,7 @@ const MemoryManagerContent = () => {
               } 
             />
             
-            {/* Add Submission Button */}
+            {/* Add Submission Button - FIXED: Using isAuthenticated instead of isConnected */}
             {hasUserOutputs && (
               <Button
                 onClick={() => setShowSubmissionDialog(true)}
@@ -278,7 +278,7 @@ const MemoryManagerContent = () => {
               >
                 <Upload className="h-4 w-4" />
                 Submit to Community
-                {!isConnected && (
+                {!isAuthenticated && (
                   <Badge variant="secondary" className="text-xs">
                     GitHub Required
                   </Badge>
