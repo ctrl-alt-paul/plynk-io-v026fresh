@@ -1,6 +1,11 @@
 
+import { format } from 'date-fns';
 import { MemoryProfile, MemoryProfileOutput } from '@/types/memoryProfiles';
 import { GitHubUser } from '@/state/githubAuthStore';
+
+// Hard-coded GitHub repository configuration
+const GITHUB_OWNER = 'ctrl-alt-paul';
+const GITHUB_REPO = 'plynk-io-v026fresh';
 
 export interface SubmissionData {
   profile: MemoryProfile;
@@ -18,12 +23,18 @@ export interface ValidationError {
   message: string;
 }
 
+export interface GitHubIssueData {
+  title: string;
+  body: string;
+  labels: string[];
+}
+
 export class GitHubSubmissionService {
   static validateProfileForSubmission(profile: MemoryProfile, selectedOutputIds: string[]): ValidationError[] {
     const errors: ValidationError[] = [];
     
     const selectedOutputs = profile.outputs.filter(output => 
-      selectedOutputIds.includes(output.label) // Using label as ID for now
+      selectedOutputIds.includes(output.label)
     );
 
     selectedOutputs.forEach(output => {
@@ -67,39 +78,13 @@ export class GitHubSubmissionService {
     return output.address || '';
   }
 
-  static prepareProfileForSubmission(
-    profile: MemoryProfile,
-    submissionData: SubmissionData,
-    user: GitHubUser,
-    issueNumber: number
-  ): MemoryProfile {
-    const selectedOutputs = profile.outputs.filter(output => 
-      submissionData.selectedOutputIds.includes(output.label)
-    );
+  static formatSubmissionDate(date: Date): string {
+    return format(date, 'dd MMM yyyy');
+  }
 
-    // Transform outputs to community source and update notes
-    const transformedOutputs = selectedOutputs.map(output => ({
-      ...output,
-      source: 'community' as const,
-      notes: submissionData.outputNotes[output.label] || output.notes || ''
-    }));
-
-    const submissionProfile: MemoryProfile = {
-      ...profile,
-      outputs: transformedOutputs,
-      memoryProfileType: 'community',
-      _meta: {
-        issue: issueNumber,
-        submittedBy: user.login,
-        submittedAt: new Date().toISOString(),
-        gameName: submissionData.gameName,
-        gameVersion: submissionData.gameVersion,
-        emulator: submissionData.emulator,
-        globalNotes: submissionData.globalNotes
-      }
-    };
-
-    return submissionProfile;
+  static createIssueTitle(gameName: string, username: string, submissionDate: Date): string {
+    const formattedDate = this.formatSubmissionDate(submissionDate);
+    return `${gameName} – (Submitted by ${username} on ${formattedDate})`;
   }
 
   static getGitHubLabels(emulator: string): string[] {
@@ -108,6 +93,70 @@ export class GitHubSubmissionService {
       'pending-verify',
       emulator.toLowerCase()
     ];
+  }
+
+  static createIssueBody(submissionData: SubmissionData, user: GitHubUser, submissionDate: Date): string {
+    const selectedOutputs = submissionData.profile.outputs.filter(output => 
+      submissionData.selectedOutputIds.includes(output.label)
+    );
+
+    const addressesTable = selectedOutputs.map(output => {
+      const addressValue = this.getAddressValue(output);
+      const addressType = this.getAddressTypeLabel(output);
+      const notes = submissionData.outputNotes[output.label] || output.notes || 'N/A';
+      return `| ${output.label} | ${addressValue} | ${output.type} | ${addressType} | ${notes} |`;
+    }).join('\n');
+
+    const profileJson = JSON.stringify({
+      process: submissionData.profile.process,
+      pollInterval: submissionData.profile.pollInterval,
+      outputs: selectedOutputs.map(output => ({
+        label: output.label,
+        type: output.type,
+        address: output.address,
+        offset: output.offset,
+        useModuleOffset: output.useModuleOffset,
+        moduleName: output.moduleName,
+        notes: submissionData.outputNotes[output.label] || output.notes || '',
+        invert: output.invert,
+        format: output.format,
+        script: output.script,
+        offsets: output.offsets,
+        bitmask: output.bitmask,
+        bitwiseOp: output.bitwiseOp,
+        bitfield: output.bitfield
+      }))
+    }, null, 2);
+
+    return `## Game Information
+**Game Name:** ${submissionData.gameName}
+**Game Version:** ${submissionData.gameVersion || 'N/A'}
+**Emulator:** ${submissionData.emulator}
+**Process:** ${submissionData.profile.process}
+**Poll Interval:** ${submissionData.profile.pollInterval}ms
+
+## Submission Details
+**Submitted by:** ${user.login}
+**Submission Date:** ${this.formatSubmissionDate(submissionDate)}
+**Number of Memory Addresses:** ${selectedOutputs.length}
+
+## Description
+${submissionData.globalNotes || 'No additional notes provided.'}
+
+## Memory Addresses
+
+| Label | Address | Type | Address Type | Notes |
+|-------|---------|------|--------------|-------|
+${addressesTable}
+
+## Complete Profile JSON
+
+\`\`\`json
+${profileJson}
+\`\`\`
+
+---
+*This memory profile was submitted through PLYNK-IO and is pending verification.*`;
   }
 
   static async submitProfile(submissionData: SubmissionData, user: GitHubUser): Promise<{ success: boolean; error?: string; issueUrl?: string }> {
@@ -125,32 +174,40 @@ export class GitHubSubmissionService {
         };
       }
 
-      // For now, we'll simulate the GitHub submission
-      // In a real implementation, this would:
-      // 1. Create/find the community profiles repository
-      // 2. Create a new issue with the profile data
-      // 3. Apply the appropriate labels
+      const submissionDate = new Date();
       
-      const mockIssueNumber = Math.floor(Math.random() * 1000) + 100;
-      const preparedProfile = this.prepareProfileForSubmission(
-        submissionData.profile,
-        submissionData,
-        user,
-        mockIssueNumber
-      );
-
-      console.log('Profile prepared for submission:', preparedProfile);
-      console.log('GitHub Labels:', this.getGitHubLabels(submissionData.emulator));
-      console.log('Issue Title:', `Memory Profile: ${submissionData.gameName}`);
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      return {
-        success: true,
-        issueUrl: `https://github.com/plynk-io/community-profiles/issues/${mockIssueNumber}`
+      const issueData: GitHubIssueData = {
+        title: this.createIssueTitle(submissionData.gameName, user.login, submissionDate),
+        body: this.createIssueBody(submissionData, user, submissionDate),
+        labels: this.getGitHubLabels(submissionData.emulator)
       };
+
+      // Call Electron IPC to create GitHub issue
+      if (!window.electron) {
+        throw new Error('Electron API not available');
+      }
+
+      // Get the user's token from localStorage (where it's stored by the GitHub auth store)
+      const token = localStorage.getItem('github_token');
+      if (!token) {
+        throw new Error('No GitHub token found');
+      }
+
+      const result = await window.electron.githubCreateIssue(GITHUB_OWNER, GITHUB_REPO, issueData);
+
+      if (result.success && result.issueUrl) {
+        return {
+          success: true,
+          issueUrl: result.issueUrl
+        };
+      } else {
+        return {
+          success: false,
+          error: result.error || 'Failed to create GitHub issue'
+        };
+      }
     } catch (error) {
+      console.error('GitHub submission error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred'

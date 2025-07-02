@@ -1,6 +1,7 @@
 
 const { GitHubAuthService } = require('../services/githubAuthService');
 const { logToDevTools } = require('../logger');
+const fetch = require('node-fetch');
 
 // GitHub OAuth IPC handlers
 const registerGitHubHandlers = (ipcMain) => {
@@ -39,6 +40,62 @@ const registerGitHubHandlers = (ipcMain) => {
       return { success: true, user };
     } catch (error) {
       logToDevTools(`Error validating GitHub token: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Create GitHub issue
+  ipcMain.handle('github:create-issue', async (_, owner, repo, issueData) => {
+    try {
+      logToDevTools(`Creating GitHub issue in ${owner}/${repo}`);
+      
+      // Get token from storage - this should be handled by the auth service
+      // For now, we'll expect the token to be passed or retrieved from a secure store
+      const token = global.githubToken; // This would need to be set by the auth flow
+      
+      if (!token) {
+        throw new Error('No GitHub token available');
+      }
+      
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: issueData.title,
+          body: issueData.body,
+          labels: issueData.labels
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        logToDevTools(`GitHub issue creation error: ${response.status} - ${errorText}`);
+        
+        if (response.status === 404) {
+          throw new Error('Repository not found or insufficient permissions');
+        } else if (response.status === 403) {
+          throw new Error('Rate limit exceeded or insufficient permissions');
+        } else if (response.status === 401) {
+          throw new Error('Invalid or expired GitHub token');
+        } else {
+          throw new Error(`GitHub API error: ${response.status}`);
+        }
+      }
+
+      const issue = await response.json();
+      logToDevTools(`GitHub issue created successfully: ${issue.html_url}`);
+      
+      return { 
+        success: true, 
+        issueUrl: issue.html_url,
+        issueNumber: issue.number
+      };
+    } catch (error) {
+      logToDevTools(`Error creating GitHub issue: ${error.message}`);
       return { success: false, error: error.message };
     }
   });

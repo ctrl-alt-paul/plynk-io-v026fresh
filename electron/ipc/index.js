@@ -9,11 +9,13 @@ const { registerOutputOptimizationHandlers } = require('./outputOptimizationHand
 const { registerMemoryHandlers } = require('./memoryHandlers');
 const { registerSettingsHandlers } = require('./settingsHandlers');
 const { registerUtilityHandlers } = require('./utilityHandlers');
+const { registerGitHubHandlers } = require('./githubHandlers');
 const { setWledHandlersRegistered, isWledHandlersRegistered } = require('../state/globals');
 const { logToFile } = require('../logger');
 
 function registerAllIpcHandlers(app) {
   const { logEvent } = require('../loggerBridge');
+  const { ipcMain } = require('electron');
   
   // Register device handlers
   registerDeviceHandlers();
@@ -63,6 +65,10 @@ function registerAllIpcHandlers(app) {
   // Register utility handlers
   registerUtilityHandlers();
   logEvent('debug', 'Utility handlers registered successfully');
+  
+  // Register GitHub handlers
+  registerGitHubHandlers(ipcMain);
+  logEvent('debug', 'GitHub handlers registered successfully');
 }
 
 module.exports = { registerAllIpcHandlers };

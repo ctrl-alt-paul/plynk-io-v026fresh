@@ -10,6 +10,7 @@ export interface ElectronAPI {
   githubStartDeviceFlow: () => Promise<{ success: boolean; data?: any; error?: string }>;
   githubPollForToken: (deviceCode: string) => Promise<{ success: boolean; token?: string; error?: string }>;
   githubValidateToken: (token: string) => Promise<{ success: boolean; user?: any; error?: string }>;
+  githubCreateIssue: (owner: string, repo: string, issueData: { title: string; body: string; labels: string[] }) => Promise<{ success: boolean; issueUrl?: string; issueNumber?: number; error?: string }>;
   
   // PacDrive methods
   testPacDriveDevice: (deviceId: number) => Promise<boolean>;
