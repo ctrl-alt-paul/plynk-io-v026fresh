@@ -53,24 +53,35 @@ export function MemoryProfileSubmissionDialog({
 }: MemoryProfileSubmissionDialogProps) {
   const { user, isConnected } = useGitHubAuth();
   const [selectedOutputs, setSelectedOutputs] = useState<string[]>([]);
+  const [gameName, setGameName] = useState('');
   const [gameVersion, setGameVersion] = useState('');
   const [emulator, setEmulator] = useState('');
   const [globalNotes, setGlobalNotes] = useState('');
+  const [outputNotes, setOutputNotes] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
 
+  // Initialize output notes from userOutputs
+  React.useEffect(() => {
+    const initialNotes: Record<string, string> = {};
+    userOutputs.forEach(output => {
+      initialNotes[output.label] = output.notes || '';
+    });
+    setOutputNotes(initialNotes);
+  }, [userOutputs]);
+
   // Validate form whenever selections change
   const validation = useMemo(() => {
-    if (selectedOutputs.length === 0) return { isValid: false, errors: [] };
+    if (selectedOutputs.length === 0 || gameName.trim() === '') return { isValid: false, errors: [] };
     
     const errors = GitHubSubmissionService.validateProfileForSubmission(profile, selectedOutputs);
     setValidationErrors(errors);
     
     return {
-      isValid: errors.length === 0 && gameVersion.trim() !== '' && emulator !== '',
+      isValid: errors.length === 0 && gameName.trim() !== '' && emulator !== '',
       errors
     };
-  }, [profile, selectedOutputs, gameVersion, emulator]);
+  }, [profile, selectedOutputs, gameName, emulator]);
 
   const handleOutputToggle = (outputLabel: string, checked: boolean) => {
     setSelectedOutputs(prev => 
@@ -86,6 +97,13 @@ export function MemoryProfileSubmissionDialog({
 
   const handleDeselectAll = () => {
     setSelectedOutputs([]);
+  };
+
+  const handleNotesChange = (outputLabel: string, notes: string) => {
+    setOutputNotes(prev => ({
+      ...prev,
+      [outputLabel]: notes
+    }));
   };
 
   const handleSubmit = async () => {
@@ -104,10 +122,12 @@ export function MemoryProfileSubmissionDialog({
     try {
       const submissionData: SubmissionData = {
         profile,
+        gameName: gameName.trim(),
         gameVersion: gameVersion.trim(),
         emulator,
         globalNotes: globalNotes.trim(),
-        selectedOutputIds: selectedOutputs
+        selectedOutputIds: selectedOutputs,
+        outputNotes
       };
 
       const result = await GitHubSubmissionService.submitProfile(submissionData, user);
@@ -121,9 +141,11 @@ export function MemoryProfileSubmissionDialog({
         
         // Reset form
         setSelectedOutputs([]);
+        setGameName('');
         setGameVersion('');
         setEmulator('');
         setGlobalNotes('');
+        setOutputNotes({});
       } else {
         toast.error(result.error || 'Submission failed');
       }
@@ -189,30 +211,42 @@ export function MemoryProfileSubmissionDialog({
           </div>
 
           {/* Submission Details */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
             <div>
-              <Label htmlFor="gameVersion">Game Version *</Label>
+              <Label htmlFor="gameName">Game Name *</Label>
               <Input
-                id="gameVersion"
-                value={gameVersion}
-                onChange={(e) => setGameVersion(e.target.value)}
-                placeholder="e.g., v1.2.3, Steam Version, etc."
+                id="gameName"
+                value={gameName}
+                onChange={(e) => setGameName(e.target.value)}
+                placeholder="e.g., Sega Rally 3, Daytona USA, etc."
               />
             </div>
-            <div>
-              <Label htmlFor="emulator">Emulator *</Label>
-              <Select value={emulator} onValueChange={setEmulator}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select emulator" />
-                </SelectTrigger>
-                <SelectContent>
-                  {EMULATOR_OPTIONS.map(option => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="gameVersion">Game Version</Label>
+                <Input
+                  id="gameVersion"
+                  value={gameVersion}
+                  onChange={(e) => setGameVersion(e.target.value)}
+                  placeholder="e.g., v1.2.3, Steam Version, etc."
+                />
+              </div>
+              <div>
+                <Label htmlFor="emulator">Emulator *</Label>
+                <Select value={emulator} onValueChange={setEmulator}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select emulator" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EMULATOR_OPTIONS.map(option => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
@@ -281,8 +315,13 @@ export function MemoryProfileSubmissionDialog({
                           {GitHubSubmissionService.getAddressTypeLabel(output)}
                         </Badge>
                       </div>
-                      <div className="col-span-3 text-muted-foreground">
-                        {output.notes || 'No notes'}
+                      <div className="col-span-3">
+                        <Input
+                          value={outputNotes[output.label] || ''}
+                          onChange={(e) => handleNotesChange(output.label, e.target.value)}
+                          placeholder="Add notes..."
+                          className="text-xs h-8"
+                        />
                       </div>
                     </div>
                   );

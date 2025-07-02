@@ -4,10 +4,12 @@ import { GitHubUser } from '@/state/githubAuthStore';
 
 export interface SubmissionData {
   profile: MemoryProfile;
+  gameName: string;
   gameVersion: string;
   emulator: string;
   globalNotes: string;
   selectedOutputIds: string[];
+  outputNotes: Record<string, string>;
 }
 
 export interface ValidationError {
@@ -75,10 +77,11 @@ export class GitHubSubmissionService {
       submissionData.selectedOutputIds.includes(output.label)
     );
 
-    // Transform outputs to community source
+    // Transform outputs to community source and update notes
     const transformedOutputs = selectedOutputs.map(output => ({
       ...output,
-      source: 'community' as const
+      source: 'community' as const,
+      notes: submissionData.outputNotes[output.label] || output.notes || ''
     }));
 
     const submissionProfile: MemoryProfile = {
@@ -89,6 +92,7 @@ export class GitHubSubmissionService {
         issue: issueNumber,
         submittedBy: user.login,
         submittedAt: new Date().toISOString(),
+        gameName: submissionData.gameName,
         gameVersion: submissionData.gameVersion,
         emulator: submissionData.emulator,
         globalNotes: submissionData.globalNotes
@@ -137,6 +141,7 @@ export class GitHubSubmissionService {
 
       console.log('Profile prepared for submission:', preparedProfile);
       console.log('GitHub Labels:', this.getGitHubLabels(submissionData.emulator));
+      console.log('Issue Title:', `Memory Profile: ${submissionData.gameName}`);
 
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
