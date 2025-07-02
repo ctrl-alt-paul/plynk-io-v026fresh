@@ -31,10 +31,12 @@ export function MainNav() {
     isAuthenticated, 
     user, 
     isConnecting, 
+    isCheckingStatus,
     deviceFlow, 
     error,
     startAuthentication, 
     cancelAuthentication,
+    checkAuthStatus,
     logout 
   } = useGitHubAuth();
 
@@ -245,12 +247,14 @@ export function MainNav() {
         userCode={deviceFlow?.user_code || ''}
         verificationUri={deviceFlow?.verification_uri || 'https://github.com/login/device'}
         isPolling={isConnecting}
+        isCheckingStatus={isCheckingStatus}
         isConnected={isAuthenticated}
         connectedUser={user}
         onCancel={() => {
           cancelAuthentication();
           setShowGitHubDialog(false);
         }}
+        onCheckStatus={checkAuthStatus}
       />
     </div>
   );
