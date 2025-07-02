@@ -300,7 +300,7 @@ export const profileStorage = {
       isPointerChain: output.isPointerChain || false,
       disableCaching: false,
       fastModeEnabled: false,
-      source: output.source || "profile" // Default to "profile" for loaded addresses
+      source: (output.source as "user" | "profile" | "community") || "profile" // Fixed type casting
     };
   },
 

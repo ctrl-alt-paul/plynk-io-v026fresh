@@ -1,4 +1,3 @@
-
 /**
  * Interface for memory address data
  */
@@ -22,7 +21,7 @@ export interface MemoryAddress {
   format: string;
   script: string;
   notes: string; // Added notes property to fix TypeScript errors
-  offsets?: string[];
+  offsets: string[]; // Made required to match MemoryProfileOutput
   bitmask?: string;
   bitwiseOp?: "AND" | "OR" | "XOR" | "NOT" | ""; 
   bitfield?: boolean;
@@ -32,7 +31,7 @@ export interface MemoryAddress {
   priority?: "high" | "normal" | "low"; // Priority level for memory reading operations
   refreshInterval?: number; // Custom refresh interval in milliseconds
   batchGroup?: string; // Group identifier for batch processing
-  source?: "user" | "profile"; // Track the origin of the memory address
+  source?: "user" | "profile" | "community"; // Track the origin of the memory address
 }
 
 /**

@@ -32,28 +32,6 @@ export class GitHubAuthService {
     return result.data;
   }
 
-  static async checkAuthStatus(deviceCode: string): Promise<string | null> {
-    console.log('Checking GitHub authorization status via IPC for device code:', deviceCode);
-    
-    if (!window.electron?.githubCheckAuthStatus) {
-      throw new Error('Electron IPC not available');
-    }
-
-    const result = await window.electron.githubCheckAuthStatus(deviceCode);
-    console.log('GitHub status check response via IPC:', { success: result.success, hasToken: !!result.token, pending: result.pending });
-
-    if (result.success && result.token) {
-      console.log('GitHub access token received successfully via IPC!');
-      return result.token;
-    } else if (result.pending) {
-      console.log('GitHub authorization still pending');
-      return null; // Still pending, no error
-    } else {
-      console.error('GitHub status check error via IPC:', result.error);
-      throw new Error(result.error || 'Authorization failed');
-    }
-  }
-
   static async pollForToken(deviceCode: string): Promise<string> {
     console.log('Starting GitHub token polling via IPC for device code:', deviceCode);
     
