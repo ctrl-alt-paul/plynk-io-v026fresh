@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ExternalLink, Copy, Check, CheckCircle } from 'lucide-react';
 import {
   Dialog,
@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useState } from 'react';
 import { GitHubUser } from '@/state/githubAuthStore';
+import { GitHubAuthService } from '@/services/githubAuth';
 
 interface GitHubDeviceDialogProps {
   open: boolean;
@@ -36,6 +37,24 @@ export function GitHubDeviceDialog({
 }: GitHubDeviceDialogProps) {
   const [copied, setCopied] = useState(false);
 
+  // Clean up polling when dialog is closed or component unmounts
+  useEffect(() => {
+    return () => {
+      if (!isConnected) {
+        console.log('Cleaning up GitHub polling on dialog close');
+        GitHubAuthService.stopPolling();
+      }
+    };
+  }, [isConnected]);
+
+  // Clean up polling when dialog is explicitly closed
+  useEffect(() => {
+    if (!open && !isConnected) {
+      console.log('Dialog closed, stopping GitHub polling');
+      GitHubAuthService.stopPolling();
+    }
+  }, [open, isConnected]);
+
   const handleCopyCode = async () => {
     try {
       await navigator.clipboard.writeText(userCode);
@@ -47,6 +66,7 @@ export function GitHubDeviceDialog({
   };
 
   const handleOpenGitHub = () => {
+    console.log('Opening GitHub authorization page');
     if (window.electron?.openExternal) {
       window.electron.openExternal(verificationUri);
     } else {
@@ -58,12 +78,22 @@ export function GitHubDeviceDialog({
     if (isConnected) {
       onOpenChange(false);
     } else {
+      console.log('Cancelling GitHub authorization');
+      GitHubAuthService.stopPolling();
       onCancel();
     }
   };
 
+  const handleDialogOpenChange = (newOpen: boolean) => {
+    if (!newOpen && !isConnected) {
+      console.log('Dialog closing, stopping polling');
+      GitHubAuthService.stopPolling();
+    }
+    onOpenChange(newOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -165,7 +195,6 @@ export function GitHubDeviceDialog({
             </>
           )}
           
-          {/* Single button that changes based on connection state */}
           <Button onClick={handleButtonClick} variant="outline" className="w-full">
             {isConnected ? 'Close' : 'Cancel'}
           </Button>
