@@ -1,3 +1,4 @@
+
 const { GitHubAuthService } = require('../services/githubAuthService');
 const { logToDevTools } = require('../logger');
 const fetch = require('node-fetch');
@@ -34,7 +35,16 @@ const registerGitHubHandlers = (ipcMain) => {
       return { success: true, token };
     } catch (error) {
       logToDevTools(`Error polling for GitHub token: ${error.message}`);
-      return { success: false, error: error.message };
+      
+      // Provide more user-friendly error messages
+      let userFriendlyError = error.message;
+      if (error.message.includes('Too many requests')) {
+        userFriendlyError = 'GitHub rate limit reached. Please wait 5-10 minutes before trying to connect again.';
+      } else if (error.message.includes('slow_down')) {
+        userFriendlyError = 'Polling too frequently. Please wait a moment and try again.';
+      }
+      
+      return { success: false, error: userFriendlyError };
     }
   });
 
@@ -79,11 +89,16 @@ const registerGitHubHandlers = (ipcMain) => {
         logToDevTools(`GitHub issue creation error: ${response.status} - ${errorText}`);
         
         if (response.status === 404) {
-          throw new Error('Repository not found or insufficient permissions');
+          throw new Error('Repository not found or insufficient permissions. Please ensure you have write access to the repository and your GitHub token has the correct permissions.');
         } else if (response.status === 403) {
-          throw new Error('Rate limit exceeded or insufficient permissions');
+          const rateLimitRemaining = response.headers.get('x-ratelimit-remaining');
+          if (rateLimitRemaining === '0') {
+            throw new Error('GitHub API rate limit exceeded. Please wait before trying again.');
+          } else {
+            throw new Error('Insufficient permissions to create issues. Please ensure your GitHub token has the correct permissions.');
+          }
         } else if (response.status === 401) {
-          throw new Error('Invalid or expired GitHub token');
+          throw new Error('Invalid or expired GitHub token. Please reconnect your GitHub account.');
         } else {
           throw new Error(`GitHub API error: ${response.status}`);
         }

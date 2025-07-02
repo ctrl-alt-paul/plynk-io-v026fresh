@@ -39,8 +39,19 @@ export class GitHubAuthService {
 
   static async pollForToken(deviceCode: string): Promise<string> {
     return new Promise((resolve, reject) => {
+      let pollCount = 0;
+      const maxPolls = 180; // 15 minutes max (180 * 5 seconds)
+      
       const poll = async () => {
         try {
+          pollCount++;
+          
+          // Stop polling if we've exceeded max attempts
+          if (pollCount > maxPolls) {
+            reject(new Error('Authorization timeout - exceeded maximum polling attempts'));
+            return;
+          }
+
           const response = await fetch('https://github.com/login/oauth/access_token', {
             method: 'POST',
             headers: {
@@ -54,12 +65,22 @@ export class GitHubAuthService {
             }),
           });
 
+          // Check for rate limiting
+          if (response.status === 429) {
+            reject(new Error('Too many requests to GitHub. Please wait a few minutes and try again.'));
+            return;
+          }
+
           const data: GitHubTokenResponse = await response.json();
 
           if (data.access_token) {
             resolve(data.access_token);
           } else if (data.error && data.error !== 'authorization_pending') {
-            reject(new Error(data.error_description || 'Authorization failed'));
+            if (data.error === 'slow_down') {
+              reject(new Error('Polling too frequently. Please wait a moment and try again.'));
+            } else {
+              reject(new Error(data.error_description || 'Authorization failed'));
+            }
           }
         } catch (error) {
           reject(error);

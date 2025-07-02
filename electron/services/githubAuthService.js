@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 
 class GitHubAuthService {
   static CLIENT_ID = 'Ov23liJfTs91MQkp5rQ2'; // PLYNK-IO GitHub OAuth App
-  static SCOPE = 'read:user';
+  static SCOPE = 'read:user public_repo';
 
   static async initiateDeviceFlow() {
     try {
@@ -38,8 +38,20 @@ class GitHubAuthService {
   static async pollForToken(deviceCode) {
     return new Promise((resolve, reject) => {
       console.log('Starting token polling...');
+      let pollCount = 0;
+      const maxPolls = 180; // 15 minutes max (180 * 5 seconds)
+      
       const poll = async () => {
         try {
+          pollCount++;
+          
+          // Stop polling if we've exceeded max attempts
+          if (pollCount > maxPolls) {
+            console.log('Polling exceeded maximum attempts');
+            reject(new Error('Authorization timeout - exceeded maximum polling attempts'));
+            return;
+          }
+
           const response = await fetch('https://github.com/login/oauth/access_token', {
             method: 'POST',
             headers: {
@@ -53,6 +65,13 @@ class GitHubAuthService {
             }),
           });
 
+          // Check for rate limiting
+          if (response.status === 429) {
+            console.log('Rate limited by GitHub, will retry with longer interval');
+            reject(new Error('Too many requests to GitHub. Please wait a few minutes and try again.'));
+            return;
+          }
+
           const data = await response.json();
 
           if (data.access_token) {
@@ -60,8 +79,13 @@ class GitHubAuthService {
             resolve(data.access_token);
           } else if (data.error && data.error !== 'authorization_pending') {
             console.error('Authorization error:', data.error, data.error_description);
-            reject(new Error(data.error_description || 'Authorization failed'));
+            if (data.error === 'slow_down') {
+              reject(new Error('Polling too frequently. Please wait a moment and try again.'));
+            } else {
+              reject(new Error(data.error_description || 'Authorization failed'));
+            }
           }
+          // If authorization_pending, we continue polling
         } catch (error) {
           console.error('Polling error:', error);
           reject(error);
