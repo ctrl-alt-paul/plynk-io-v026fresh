@@ -29,6 +29,23 @@ export interface GitHubIssueData {
   labels: string[];
 }
 
+// Token encryption/decryption utilities to match the auth store
+const STORAGE_KEY = 'github_auth_token';
+
+const decryptToken = (encrypted: string): string | null => {
+  try {
+    const decoded = atob(encrypted);
+    return decoded.replace('_plynk_salt', '');
+  } catch {
+    return null;
+  }
+};
+
+const getStoredToken = (): string | null => {
+  const encrypted = localStorage.getItem(STORAGE_KEY);
+  return encrypted ? decryptToken(encrypted) : null;
+};
+
 export class GitHubSubmissionService {
   static validateProfileForSubmission(profile: MemoryProfile, selectedOutputIds: string[]): ValidationError[] {
     const errors: ValidationError[] = [];
@@ -187,11 +204,14 @@ ${profileJson}
         throw new Error('Electron API not available');
       }
 
-      // Get the user's token from localStorage (where it's stored by the GitHub auth store)
-      const token = localStorage.getItem('github_token');
+      // Get the user's token using the same encryption method as the auth store
+      const token = getStoredToken();
       if (!token) {
-        throw new Error('No GitHub token found');
+        throw new Error('No GitHub token found. Please reconnect to GitHub.');
       }
+
+      // Set the token globally for the Electron handler to use
+      global.githubToken = token;
 
       const result = await window.electron.githubCreateIssue(GITHUB_OWNER, GITHUB_REPO, issueData);
 

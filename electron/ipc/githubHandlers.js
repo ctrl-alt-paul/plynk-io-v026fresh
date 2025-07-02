@@ -3,8 +3,16 @@ const { GitHubAuthService } = require('../services/githubAuthService');
 const { logToDevTools } = require('../logger');
 const fetch = require('node-fetch');
 
+let handlersRegistered = false;
+
 // GitHub OAuth IPC handlers
 const registerGitHubHandlers = (ipcMain) => {
+  // Prevent duplicate registration
+  if (handlersRegistered) {
+    logToDevTools('GitHub handlers already registered, skipping...');
+    return;
+  }
+
   // Start GitHub device flow
   ipcMain.handle('github:start-device-flow', async () => {
     try {
@@ -49,9 +57,8 @@ const registerGitHubHandlers = (ipcMain) => {
     try {
       logToDevTools(`Creating GitHub issue in ${owner}/${repo}`);
       
-      // Get token from storage - this should be handled by the auth service
-      // For now, we'll expect the token to be passed or retrieved from a secure store
-      const token = global.githubToken; // This would need to be set by the auth flow
+      // Get token from global scope (set by the renderer process)
+      const token = global.githubToken;
       
       if (!token) {
         throw new Error('No GitHub token available');
@@ -99,6 +106,9 @@ const registerGitHubHandlers = (ipcMain) => {
       return { success: false, error: error.message };
     }
   });
+
+  handlersRegistered = true;
+  logToDevTools('GitHub handlers registered successfully');
 };
 
 module.exports = { registerGitHubHandlers };
