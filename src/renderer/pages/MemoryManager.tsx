@@ -480,12 +480,14 @@ const MemoryManagerContent = () => {
         </div>
       </div>
       
-      {/* Add Submission Dialog */}
-      {profileManager.currentProfile && (
+      {/* Update Submission Dialog - always render when there are user outputs */}
+      {hasUserOutputs && (
         <MemoryProfileSubmissionDialog
           open={showSubmissionDialog}
           onOpenChange={setShowSubmissionDialog}
-          profile={profileManager.currentProfile}
+          profile={profileManager.currentProfile || undefined}
+          process={selectedProcess || undefined}
+          pollInterval={profileManager.defaultPollInterval}
           userOutputs={userOutputs}
         />
       )}

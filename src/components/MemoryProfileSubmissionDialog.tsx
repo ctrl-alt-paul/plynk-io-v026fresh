@@ -29,7 +29,9 @@ import { GitHubSubmissionService, SubmissionData, ValidationError } from '@/serv
 interface MemoryProfileSubmissionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  profile: MemoryProfile;
+  profile?: MemoryProfile;
+  process?: string;
+  pollInterval?: number;
   userOutputs: MemoryProfileOutput[];
 }
 
@@ -49,6 +51,8 @@ export function MemoryProfileSubmissionDialog({
   open,
   onOpenChange,
   profile,
+  process,
+  pollInterval,
   userOutputs
 }: MemoryProfileSubmissionDialogProps) {
   const { user, isConnected } = useGitHubAuth();
@@ -60,6 +64,20 @@ export function MemoryProfileSubmissionDialog({
   const [outputNotes, setOutputNotes] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
+
+  // Create a temporary profile if none is provided
+  const workingProfile = useMemo(() => {
+    if (profile) return profile;
+    
+    return {
+      id: 'temp-profile',
+      fileName: 'temp-profile',
+      process: process || '',
+      pollInterval: pollInterval || 16,
+      outputs: userOutputs,
+      memoryProfileType: 'user' as const
+    };
+  }, [profile, process, pollInterval, userOutputs]);
 
   // Initialize output notes from userOutputs
   React.useEffect(() => {
@@ -74,14 +92,14 @@ export function MemoryProfileSubmissionDialog({
   const validation = useMemo(() => {
     if (selectedOutputs.length === 0 || gameName.trim() === '') return { isValid: false, errors: [] };
     
-    const errors = GitHubSubmissionService.validateProfileForSubmission(profile, selectedOutputs);
+    const errors = GitHubSubmissionService.validateProfileForSubmission(workingProfile, selectedOutputs);
     setValidationErrors(errors);
     
     return {
       isValid: errors.length === 0 && gameName.trim() !== '' && emulator !== '',
       errors
     };
-  }, [profile, selectedOutputs, gameName, emulator]);
+  }, [workingProfile, selectedOutputs, gameName, emulator]);
 
   const handleOutputToggle = (outputLabel: string, checked: boolean) => {
     setSelectedOutputs(prev => 
@@ -121,7 +139,7 @@ export function MemoryProfileSubmissionDialog({
 
     try {
       const submissionData: SubmissionData = {
-        profile,
+        profile: workingProfile,
         gameName: gameName.trim(),
         gameVersion: gameVersion.trim(),
         emulator,
@@ -202,10 +220,10 @@ export function MemoryProfileSubmissionDialog({
             <h3 className="font-medium mb-2">Profile Information</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-muted-foreground">Process:</span> {profile.process}
+                <span className="text-muted-foreground">Process:</span> {workingProfile.process}
               </div>
               <div>
-                <span className="text-muted-foreground">Poll Interval:</span> {profile.pollInterval}ms
+                <span className="text-muted-foreground">Poll Interval:</span> {workingProfile.pollInterval}ms
               </div>
             </div>
           </div>
