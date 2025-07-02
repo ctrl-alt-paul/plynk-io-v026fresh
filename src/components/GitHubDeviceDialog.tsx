@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { ExternalLink, Copy, Check, CheckCircle } from 'lucide-react';
+import { ExternalLink, Copy, Check, CheckCircle, RefreshCw } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -20,9 +20,11 @@ interface GitHubDeviceDialogProps {
   userCode: string;
   verificationUri: string;
   isPolling: boolean;
+  isCheckingStatus: boolean;
   isConnected: boolean;
   connectedUser: GitHubUser | null;
   onCancel: () => void;
+  onCheckStatus: () => void;
 }
 
 export function GitHubDeviceDialog({
@@ -31,9 +33,11 @@ export function GitHubDeviceDialog({
   userCode,
   verificationUri,
   isPolling,
+  isCheckingStatus,
   isConnected,
   connectedUser,
   onCancel,
+  onCheckStatus,
 }: GitHubDeviceDialogProps) {
   const [copied, setCopied] = useState(false);
 
@@ -173,7 +177,7 @@ export function GitHubDeviceDialog({
                   <li>Click "Open GitHub" below</li>
                   <li>Paste or enter the activation code</li>
                   <li>Authorize PLYNK-IO to access your account</li>
-                  <li>Return to this app - connection will complete automatically</li>
+                  <li>Return here and click "Check Status"</li>
                 </ol>
               </div>
 
@@ -182,16 +186,24 @@ export function GitHubDeviceDialog({
                 Open GitHub Authorization
               </Button>
 
-              {isPolling && (
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground">
-                    Waiting for authorization...
-                  </p>
-                  <div className="mt-2">
-                    <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-                  </div>
-                </div>
-              )}
+              <Button 
+                onClick={onCheckStatus} 
+                variant="outline" 
+                className="w-full"
+                disabled={isCheckingStatus}
+              >
+                {isCheckingStatus ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    Checking Status...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Check Status
+                  </>
+                )}
+              </Button>
             </>
           )}
           

@@ -26,7 +26,55 @@ const registerGitHubHandlers = (ipcMain) => {
     }
   });
 
-  // Poll for GitHub access token
+  // Check GitHub authorization status once
+  ipcMain.handle('github:check-auth-status', async (_, deviceCode) => {
+    try {
+      logToDevTools(`Checking GitHub authorization status for device code: ${deviceCode}`);
+      
+      const response = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          client_id: GitHubAuthService.CLIENT_ID,
+          device_code: deviceCode,
+          grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
+        }),
+      });
+
+      if (response.status === 429) {
+        logToDevTools('Rate limited by GitHub');
+        return { success: false, error: 'Rate limited. Please wait a moment before checking again.' };
+      }
+
+      const data = await response.json();
+
+      if (data.access_token) {
+        logToDevTools('GitHub authorization successful');
+        return { success: true, token: data.access_token };
+      } else if (data.error) {
+        if (data.error === 'authorization_pending') {
+          logToDevTools('GitHub authorization still pending');
+          return { success: false, error: 'authorization_pending', pending: true };
+        } else if (data.error === 'slow_down') {
+          logToDevTools('GitHub requests too frequent');
+          return { success: false, error: 'Please wait a moment before checking again.' };
+        } else {
+          logToDevTools(`GitHub authorization error: ${data.error}`);
+          return { success: false, error: data.error_description || 'Authorization failed' };
+        }
+      }
+
+      return { success: false, error: 'Unknown response from GitHub' };
+    } catch (error) {
+      logToDevTools(`Error checking GitHub auth status: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Poll for GitHub access token (legacy - kept for compatibility)
   ipcMain.handle('github:poll-for-token', async (_, deviceCode) => {
     try {
       logToDevTools(`Polling for GitHub token with device code: ${deviceCode}`);

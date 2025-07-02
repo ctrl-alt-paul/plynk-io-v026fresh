@@ -91,6 +91,7 @@ interface ElectronAPI {
   // GitHub OAuth methods
   githubStartDeviceFlow: () => Promise<{ success: boolean; data?: any; error?: string }>;
   githubPollForToken: (deviceCode: string) => Promise<{ success: boolean; token?: string; error?: string }>;
+  githubCheckAuthStatus: (deviceCode: string) => Promise<{ success: boolean; token?: string; error?: string; pending?: boolean }>;
   githubValidateToken: (token: string) => Promise<{ success: boolean; user?: any; error?: string }>;
   githubCreateIssue: (owner: string, repo: string, issueData: { title: string; body: string; labels: string[] }, token: string) => Promise<{ success: boolean; issueUrl?: string; issueNumber?: number; error?: string }>;
   
@@ -153,7 +154,6 @@ interface MessageAPI {
 }
 
 contextBridge.exposeInMainWorld('electron', {
-  // ... keep existing code (all the existing electron API methods)
   getPacDriveStatus: () => ipcRenderer.invoke('getPacDriveStatus'),
   scanPacDriveDevices: () => ipcRenderer.invoke('scanPacDriveDevices'),
   testPacDriveDevice: (deviceId: number) => ipcRenderer.invoke('testPacDriveDevice', deviceId),
@@ -168,6 +168,7 @@ contextBridge.exposeInMainWorld('electron', {
   // GitHub OAuth methods
   githubStartDeviceFlow: () => ipcRenderer.invoke('github:start-device-flow'),
   githubPollForToken: (deviceCode: string) => ipcRenderer.invoke('github:poll-for-token', deviceCode),
+  githubCheckAuthStatus: (deviceCode: string) => ipcRenderer.invoke('github:check-auth-status', deviceCode),
   githubValidateToken: (token: string) => ipcRenderer.invoke('github:validate-token', token),
   githubCreateIssue: (owner: string, repo: string, issueData: { title: string; body: string; labels: string[] }, token: string) => 
     ipcRenderer.invoke('github:create-issue', owner, repo, issueData, token),
