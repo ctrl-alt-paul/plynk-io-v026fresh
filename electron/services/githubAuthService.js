@@ -1,9 +1,8 @@
-
 const fetch = require('node-fetch');
 
 class GitHubAuthService {
   static CLIENT_ID = 'Ov23liJfTs91MQkp5rQ2'; // PLYNK-IO GitHub OAuth App
-  static SCOPE = 'read:user public_repo';
+  static SCOPE = 'read:user repo';
 
   static async initiateDeviceFlow() {
     try {

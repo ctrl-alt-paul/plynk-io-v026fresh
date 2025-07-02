@@ -1,91 +1,106 @@
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import { create } from 'zustand';
 import { MemoryProfile, MemoryProfileOutput } from '@/types/memoryProfiles';
 
-export interface MemoryProfileStoreState {
+interface MemoryProfileState {
+  profiles: MemoryProfile[];
   currentProfile: MemoryProfile | null;
-  submissionHistory: Array<{
-    profileId: string;
-    submittedAt: string;
-    issueUrl: string;
-    gameVersion: string;
-    emulator: string;
-  }>;
-}
-
-export interface MemoryProfileStoreContextType extends MemoryProfileStoreState {
+  isLoading: boolean;
+  error: string | null;
+  
+  // Actions
+  setProfiles: (profiles: MemoryProfile[]) => void;
   setCurrentProfile: (profile: MemoryProfile | null) => void;
-  getUserCreatedOutputs: () => MemoryProfileOutput[];
-  addSubmissionToHistory: (submission: {
-    profileId: string;
-    submittedAt: string;
-    issueUrl: string;
-    gameVersion: string;
-    emulator: string;
-  }) => void;
-  clearSubmissionHistory: () => void;
+  addProfile: (profile: MemoryProfile) => void;
+  updateProfile: (profile: MemoryProfile) => void;
+  deleteProfile: (profileId: string) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
 }
 
-const MemoryProfileStoreContext = createContext<MemoryProfileStoreContextType | undefined>(undefined);
+export const useMemoryProfileStore = create<MemoryProfileState>((set) => ({
+  profiles: [],
+  currentProfile: null,
+  isLoading: false,
+  error: null,
 
-export const MemoryProfileStoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, setState] = useState<MemoryProfileStoreState>({
-    currentProfile: null,
-    submissionHistory: []
-  });
+  setProfiles: (profiles) => set({ profiles }),
+  setCurrentProfile: (profile) => set({ currentProfile: profile }),
+  addProfile: (profile) => set((state) => ({ 
+    profiles: [...state.profiles, profile] 
+  })),
+  updateProfile: (profile) => set((state) => ({
+    profiles: state.profiles.map(p => p.id === profile.id ? profile : p),
+    currentProfile: state.currentProfile?.id === profile.id ? profile : state.currentProfile
+  })),
+  deleteProfile: (profileId) => set((state) => ({
+    profiles: state.profiles.filter(p => p.id !== profileId),
+    currentProfile: state.currentProfile?.id === profileId ? null : state.currentProfile
+  })),
+  setLoading: (loading) => set({ isLoading: loading }),
+  setError: (error) => set({ error }),
+}));
 
-  const setCurrentProfile = useCallback((profile: MemoryProfile | null) => {
-    setState(prev => ({
-      ...prev,
-      currentProfile: profile
-    }));
-  }, []);
+// Helper functions for memory profile management
+export const createEmptyProfile = (): Omit<MemoryProfile, 'id' | 'fileName' | 'lastModified' | 'outputCount'> => ({
+  process: '',
+  pollInterval: 16,
+  outputs: [],
+  memoryProfileType: 'user'
+});
 
-  const getUserCreatedOutputs = useCallback((): MemoryProfileOutput[] => {
-    if (!state.currentProfile) return [];
-    
-    return state.currentProfile.outputs.filter(output => output.source === 'user');
-  }, [state.currentProfile]);
+export const createEmptyOutput = (): MemoryProfileOutput => ({
+  label: '',
+  type: 'Int32',
+  address: '',
+  notes: '',
+  invert: false,
+  format: '{value}',
+  script: '',
+  useModuleOffset: false,
+  moduleName: '',
+  offset: '',
+  offsets: [],
+  bitmask: '',
+  bitwiseOp: '',
+  bitfield: false,
+  isPointerChain: false
+});
 
-  const addSubmissionToHistory = useCallback((submission: {
-    profileId: string;
-    submittedAt: string;
-    issueUrl: string;
-    gameVersion: string;
-    emulator: string;
-  }) => {
-    setState(prev => ({
-      ...prev,
-      submissionHistory: [submission, ...prev.submissionHistory]
-    }));
-  }, []);
-
-  const clearSubmissionHistory = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      submissionHistory: []
-    }));
-  }, []);
-
-  const value: MemoryProfileStoreContextType = {
-    ...state,
-    setCurrentProfile,
-    getUserCreatedOutputs,
-    addSubmissionToHistory,
-    clearSubmissionHistory
-  };
-
-  return (
-    <MemoryProfileStoreContext.Provider value={value}>
-      {children}
-    </MemoryProfileStoreContext.Provider>
-  );
-};
-
-export const useMemoryProfileStore = (): MemoryProfileStoreContextType => {
-  const context = useContext(MemoryProfileStoreContext);
-  if (context === undefined) {
-    throw new Error('useMemoryProfileStore must be used within a MemoryProfileStoreProvider');
+// Validation helpers
+export const validateMemoryProfile = (profile: Partial<MemoryProfile>): string[] => {
+  const errors: string[] = [];
+  
+  if (!profile.process?.trim()) {
+    errors.push('Process name is required');
   }
-  return context;
+  
+  if (!profile.pollInterval || profile.pollInterval < 1) {
+    errors.push('Poll interval must be greater than 0');
+  }
+  
+  if (!profile.outputs || profile.outputs.length === 0) {
+    errors.push('At least one output is required');
+  }
+  
+  profile.outputs?.forEach((output, index) => {
+    if (!output.label?.trim()) {
+      errors.push(`Output ${index + 1}: Label is required`);
+    }
+    
+    if (output.useModuleOffset) {
+      if (!output.moduleName?.trim()) {
+        errors.push(`Output ${index + 1}: Module name is required when using module offset`);
+      }
+      if (!output.offset?.trim()) {
+        errors.push(`Output ${index + 1}: Offset is required when using module offset`);
+      }
+    } else {
+      if (!output.address?.trim()) {
+        errors.push(`Output ${index + 1}: Address is required when not using module offset`);
+      }
+    }
+  });
+  
+  return errors;
 };
