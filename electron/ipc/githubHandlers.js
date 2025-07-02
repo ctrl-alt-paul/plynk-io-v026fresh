@@ -1,3 +1,4 @@
+
 const { GitHubAuthService } = require('../services/githubAuthService');
 const { logToDevTools } = require('../logger');
 const fetch = require('node-fetch');
@@ -99,24 +100,6 @@ const registerGitHubHandlers = (ipcMain) => {
   ipcMain.handle('github:validate-token', async (_, token) => {
     try {
       logToDevTools('Validating GitHub token');
-      
-      // Check token scopes
-      const scopeResponse = await fetch('https://api.github.com/user', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      });
-      
-      if (scopeResponse.ok) {
-        const scopes = scopeResponse.headers.get('x-oauth-scopes');
-        logToDevTools(`GitHub token scopes: ${scopes}`);
-        
-        if (!scopes || !scopes.includes('repo')) {
-          logToDevTools('WARNING: GitHub token missing required "repo" scope');
-        }
-      }
-      
       const user = await GitHubAuthService.validateToken(token);
       logToDevTools(`GitHub token validated for user: ${user.login}`);
       return { success: true, user };
@@ -126,71 +109,13 @@ const registerGitHubHandlers = (ipcMain) => {
     }
   });
 
-  // Validate repository labels
-  ipcMain.handle('github:validate-labels', async (_, owner, repo, labels, token) => {
-    try {
-      logToDevTools(`Validating labels in ${owner}/${repo}: ${JSON.stringify(labels)}`);
-      
-      if (!token) {
-        throw new Error('No GitHub token provided');
-      }
-      
-      // Get existing labels from the repository
-      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/labels`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Repository not found or insufficient permissions');
-        }
-        throw new Error(`Failed to fetch repository labels: ${response.status}`);
-      }
-
-      const existingLabels = await response.json();
-      const existingLabelNames = existingLabels.map(label => label.name.toLowerCase());
-      
-      logToDevTools(`Existing repository labels: ${JSON.stringify(existingLabelNames)}`);
-      
-      const missingLabels = labels.filter(label => 
-        !existingLabelNames.includes(label.toLowerCase())
-      );
-      
-      if (missingLabels.length > 0) {
-        logToDevTools(`Missing labels in repository: ${JSON.stringify(missingLabels)}`);
-        return { 
-          success: false, 
-          error: `Missing labels in repository: ${missingLabels.join(', ')}. Please create these labels in the GitHub repository first.`,
-          missingLabels 
-        };
-      }
-      
-      logToDevTools('All labels exist in repository');
-      return { success: true };
-    } catch (error) {
-      logToDevTools(`Error validating repository labels: ${error.message}`);
-      return { success: false, error: error.message };
-    }
-  });
-
   // Create GitHub issue
   ipcMain.handle('github:create-issue', async (_, owner, repo, issueData, token) => {
     try {
       logToDevTools(`Creating GitHub issue in ${owner}/${repo}`);
-      logToDevTools(`Issue labels being sent: ${JSON.stringify(issueData.labels)}`);
       
       if (!token) {
         throw new Error('No GitHub token provided');
-      }
-      
-      // Validate labels first
-      const labelValidation = await ipcMain.handle('github:validate-labels')(null, owner, repo, issueData.labels, token);
-      if (!labelValidation.success) {
-        logToDevTools(`Label validation failed: ${labelValidation.error}`);
-        return { success: false, error: labelValidation.error };
       }
       
       const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {

@@ -200,8 +200,6 @@ ${profileJson}
         labels: this.getGitHubLabels(submissionData.emulator)
       };
 
-      console.log('GitHub labels being generated and sent:', issueData.labels);
-
       // Call Electron IPC to create GitHub issue
       if (!window.electron) {
         throw new Error('Electron API not available');
@@ -211,21 +209,6 @@ ${profileJson}
       const token = getStoredToken();
       if (!token) {
         throw new Error('No GitHub token found. Please reconnect to GitHub.');
-      }
-
-      // Validate repository labels before creating issue
-      if (window.electron.githubValidateLabels) {
-        console.log('Validating repository labels before issue creation...');
-        const labelValidation = await window.electron.githubValidateLabels(GITHUB_OWNER, GITHUB_REPO, issueData.labels, token);
-        
-        if (!labelValidation.success) {
-          console.error('Label validation failed:', labelValidation.error);
-          return {
-            success: false,
-            error: labelValidation.error
-          };
-        }
-        console.log('Repository labels validated successfully');
       }
 
       // Pass the token directly to the IPC call instead of using global
