@@ -110,8 +110,9 @@ contextBridge.exposeInMainWorld('electron', {
   // External link handling
   openExternal: (url) => ipcRenderer.invoke('openExternal', url),
   
-  // GitHub OAuth methods
+  // GitHub OAuth methods - FIXED: Adding the missing githubCheckAuthStatus method
   githubStartDeviceFlow: () => ipcRenderer.invoke('github:start-device-flow'),
+  githubCheckAuthStatus: (deviceCode) => ipcRenderer.invoke('github:check-auth-status', deviceCode),
   githubPollForToken: (deviceCode) => ipcRenderer.invoke('github:poll-for-token', deviceCode),
   githubValidateToken: (token) => ipcRenderer.invoke('github:validate-token', token),
   githubCreateIssue: (owner, repo, issueData, token) => ipcRenderer.invoke('github:create-issue', owner, repo, issueData, token),
